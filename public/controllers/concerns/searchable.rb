@@ -371,7 +371,7 @@ module Searchable
     Rails.logger.debug("TYPE: #{type}")
     condition = " "
     @search[:q].each_with_index do |q,i|
-      condition += '<li>'
+      condition += '<ul>'
       if i == 0
         if !@search[:op][i].blank?
           condition += I18n.t("search_results.op_first_row.#{@search[:op][i]}", :default => "").downcase
@@ -386,7 +386,7 @@ module Searchable
          to_year =  @search[:to_year][i].blank? ? I18n.t('search_results.filter.year_now') : @search[:to_year][i]
         condition += ' ' + I18n.t('search_results.filter.from_to', :begin => "<strong>#{from_year}</strong>", :end => "<strong>#{to_year}</strong>")
       end
-      condition += '</li>'
+      condition += '</ul>'
       Rails.logger.debug("Condition: #{condition}")
     end
     @search[:search_statement] = I18n.t('search_results.search_for', :type => type,

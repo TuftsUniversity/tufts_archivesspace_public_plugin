@@ -1,8 +1,8 @@
 class AccessionsController <  ApplicationController
   include ResultInfo
 
-  #skip_before_action  :verify_authenticity_token
-  protect_from_forgery with: :exception
+  skip_before_action  :verify_authenticity_token
+  
   before_action(:only => [:show]) {
     process_slug_or_id(params)
   }

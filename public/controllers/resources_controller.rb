@@ -4,13 +4,13 @@ class ResourcesController < ApplicationController
   helper_method :process_subjects
   helper_method :process_agents
 
-  #skip_before_action  :verify_authenticity_token
-  protect_from_forgery with: :exception
+  skip_before_action  :verify_authenticity_token
+
   before_action(:only => [:show]) {
     process_slug_or_id(params)
   }
 
-  DEFAULT_RES_FACET_TYPES = %w{primary_type subjects published_agents}
+  DEFAULT_RES_FACET_TYPES = %w{primary_type subjects published_agents langcode}
   DEFAULT_RES_INDEX_OPTS = {
     'resolve[]' => ['repository:id', 'resource:id@compact_resource', 'top_container_uri_u_sstr:id'],
     'sort' => 'title_sort asc',
@@ -28,7 +28,7 @@ class ResourcesController < ApplicationController
     op: [''],
     field: ['title']
   }
-  DEFAULT_RES_TYPES = %w{pui_archival_object pui_digital_object agent subject}
+  DEFAULT_RES_TYPES = %w{pui_collection pui_archival_object pui_digital_object agent subject}
 
   # present a list of resources.  If no repository named, just get all of them.
   def index
@@ -41,7 +41,8 @@ class ResourcesController < ApplicationController
       @base_search = "/repositories/resources?"
     end
     search_opts = default_search_opts( DEFAULT_RES_INDEX_OPTS)
-    search_opts['fq'] = ["repository:\"/repositories/#{@repo_id}\""] if @repo_id
+    search_opts['fq'] = AdvancedQueryBuilder.new.and('repository', "/repositories/#{@repo_id}") if @repo_id
+
     DEFAULT_RES_SEARCH_PARAMS.each do |k,v|
       params[k] = v unless params.fetch(k, nil)
     end
@@ -92,6 +93,7 @@ class ResourcesController < ApplicationController
     res_id = "/repositories/#{repo_id}/resources/#{params.require(:id)}"
     search_opts = DEFAULT_RES_SEARCH_OPTS
     search_opts['fq'] = ["resource:\"#{res_id}\""]
+    search_opts['fq'] = AdvancedQueryBuilder.new.and('resource', res_id).or('uri', res_id)
     params[:res_id] = res_id
 #    q = params.fetch(:q,'')
     unless params.fetch(:q,nil)
@@ -112,8 +114,8 @@ class ResourcesController < ApplicationController
       redirect_back(fallback_location: @base_search)
     else
       process_search_results(@base_search)
-      title = ''
-      title =  strip_mixed_content(@results['results'][0]['_resolved_resource']['json']['title']) if @results['results'][0] &&  @results['results'][0].dig('_resolved_resource', 'json')
+      resource =  archivesspace.get_record(res_id)
+      title = resource.display_string
 
       @context = []
       @context.push({:uri => "/repositories/#{repo_id}",
@@ -150,6 +152,9 @@ class ResourcesController < ApplicationController
       @has_containers = has_containers?(uri)
 
       @result =  archivesspace.get_record(uri, @criteria)
+
+      @has_digital_objects = @result.json.fetch('has_published_digital_objects', false)
+
       @repo_info = @result.repository_information
       @page_title = "#{I18n.t('resource._singular')}: #{strip_mixed_content(@result.display_string)}"
       @context = [{:uri => @repo_info['top']['uri'], :crumb => @repo_info['top']['name']}, {:uri => nil, :crumb => process_mixed_content(@result.display_string)}]
@@ -179,12 +184,14 @@ class ResourcesController < ApplicationController
       @criteria['resolve[]']  = ['repository:id', 'resource:id@compact_resource', 'top_container_uri_u_sstr:id', 'related_accession_uris:id']
       @result =  archivesspace.get_record(@root_uri, @criteria)
       @has_containers = has_containers?(@root_uri)
+      @has_digital_objects = @result.json.fetch('has_published_digital_objects', false)
 
       @repo_info = @result.repository_information
       @page_title = "#{I18n.t('resource._singular')}: #{strip_mixed_content(@result.display_string)}"
       @context = [{:uri => @repo_info['top']['uri'], :crumb => @repo_info['top']['name']}, {:uri => nil, :crumb => process_mixed_content(@result.display_string)}]
       fill_request_info
       @ordered_records = archivesspace.get_record(@root_uri + '/ordered_records').json.fetch('uris')
+      @ordered_records.shift # drop resource as rendered by default
     rescue RecordNotFound
       record_not_found(uri, 'resource')
     end
@@ -194,12 +201,39 @@ class ResourcesController < ApplicationController
     search_opts = {
       'resolve[]' => ['top_container_uri_u_sstr:id']
     }
+
+    urls = params[:urls]
+    waypoint_size = params[:size].to_i
+    waypoint_number = params[:number].to_i
+    collection_size = params[:collection_size].to_i
+
     results = archivesspace.search_records(params[:urls], search_opts, true)
 
-    render :json => Hash[results.records.map {|record|
-                           @result = record
-                           [record.uri,
-                            render_to_string(:partial => 'infinite_item')]}]
+    # setup caching
+    resource_uri = "/repositories/#{params[:rid]}/resources/#{params[:id]}"
+    resource_json = archivesspace.get_raw_record(resource_uri)
+    resource_system_mtime = resource_json.fetch("system_mtime")
+    response.set_header('Cache-Control', "max-age=#{60*60*24}")
+    response.set_header('Last-Modified', DateTime.strptime(resource_system_mtime).strftime("%a, %d %m %Y %H:%M:%S GMT"))
+
+    respond_to do |format|
+      format.html do
+        render partial: 'infinite_items', locals: { items: results.records, start_index: (waypoint_number * waypoint_size + 1), collection_size: collection_size }
+      end
+      format.json do
+        render :json => Hash[results.records.map {|record|
+          @result = record
+          record_number = (waypoint_number * waypoint_size) + urls.index(@result.uri) + 1
+          [record.uri,
+           render_to_string(:partial => 'infinite_item',
+                            :locals => {
+                              :record_number =>  record_number,
+                              :collection_size =>  collection_size
+                            })]}]
+      end
+    end
+
+
   end
 
   def tree_root
@@ -238,6 +272,7 @@ class ResourcesController < ApplicationController
 		@criteria = {}
 		@criteria['resolve[]']  = ['repository:id', 'resource:id@compact_resource', 'top_container_uri_u_sstr:id', 'related_accession_uris:id']
 		@result =  archivesspace.get_record(uri, @criteria)
+                @has_digital_objects = @result.json.fetch('has_published_digital_objects', false)
 		@repo_info = @result.repository_information
 		@page_title = "#{I18n.t('resource._singular')}: #{strip_mixed_content(@result.display_string)}"
 		@context = [{:uri => @repo_info['top']['uri'], :crumb => @repo_info['top']['name']}, {:uri => nil, :crumb => process_mixed_content(@result.display_string)}]
@@ -254,6 +289,34 @@ class ResourcesController < ApplicationController
 		end
 
 	rescue RecordNotFound
+    record_not_found(uri, 'resource')
+  end
+
+  def digital_materials
+    uri = "/repositories/#{params[:rid]}/resources/#{params[:id]}"
+    @has_containers = has_containers?(uri)
+    tree_root = archivesspace.get_raw_record(uri + '/tree/root') rescue nil
+    @has_children = tree_root && tree_root['child_count'] > 0
+    # stuff for the collection bits
+    @criteria = {}
+    @criteria['resolve[]']  = ['repository:id', 'resource:id@compact_resource', 'top_container_uri_u_sstr:id', 'related_accession_uris:id']
+    @result =  archivesspace.get_record(uri, @criteria)
+    @has_digital_objects = @result.json.fetch('has_published_digital_objects', false)
+    @repo_info = @result.repository_information
+    @page_title = "#{I18n.t('resource._singular')}: #{strip_mixed_content(@result.display_string)}"
+    @context = [{:uri => @repo_info['top']['uri'], :crumb => @repo_info['top']['name']}, {:uri => nil, :crumb => process_mixed_content(@result.display_string)}]
+    fill_request_info
+
+    fetch_digital_materials(uri, "#{uri}/digital_materials", params)
+
+    if !@results.blank?
+      params[:q] = '*'
+      @pager =  Pager.new(@base_search, @results['this_page'], @results['last_page'])
+    else
+      @pager = nil
+    end
+
+  rescue RecordNotFound
     record_not_found(uri, 'resource')
   end
 
@@ -274,7 +337,8 @@ class ResourcesController < ApplicationController
       'sort' => 'typeahead_sort_key_u_sort asc',
       'facet.mincount' => 1
     })
-    search_opts['fq']=[qry]
+    search_opts['fq'] = AdvancedQueryBuilder.new.and('collection_uri_u_sstr', resource_uri).and('types', 'pui').and('types', 'pui_container')
+
     set_up_search(['pui_container'], ['type_enum_s', 'published_series_title_u_sstr'], search_opts, params, qry)
     @base_search= @base_search.sub("q=#{qry}", '')
     page = Integer(params.fetch(:page, "1"))
@@ -287,5 +351,23 @@ class ResourcesController < ApplicationController
       @results = []
     end
   end
+
+  def fetch_digital_materials(resource_uri, page_uri, params)
+    qry = "resource:\"#{resource_uri}\" AND has_published_digital_objects:true"
+    @base_search = "#{page_uri}?"
+
+    set_up_search(['pui'], ObjectsController::DEFAULT_OBJ_FACET_TYPES, {}, params, qry)
+    @base_search= @base_search.sub("q=#{qry}", '')
+    page = Integer(params.fetch(:page, "1"))
+
+    @results = archivesspace.search(@query, page, @criteria)
+
+    if @results['total_hits'] > 0
+      process_search_results(@base_search)
+    else
+      @results = []
+    end
+  end
+
 
 end
