@@ -1,7 +1,7 @@
 class AgentsController <  ApplicationController
   include ResultInfo
-
-  skip_before_action  :verify_authenticity_token
+  protect_from_forgery with: :null_session
+  #skip_before_action  :verify_authenticity_token
 
   before_action(:only => [:show]) {
     process_slug_or_id(params)
