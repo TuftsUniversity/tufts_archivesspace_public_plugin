@@ -8,8 +8,7 @@ module TreeNodes
       crumbs << {
         :uri => breadcrumb_uri_for_node(node),
         :type => node['jsonmodel_type'],
-        :crumb => breadcrumb_title_for_node(node, level),
-        :identifier => breadcrumb_identifier(node, node['jsonmodel_type'])
+        :crumb => breadcrumb_title_for_node(node, level)
       }
     end
 
@@ -17,27 +16,10 @@ module TreeNodes
     crumbs << {
       :uri => '',
       :type => primary_type,
-      :crumb => display_string,
-      :identifier => breadcrumb_identifier(self, primary_type)
+      :crumb => display_string
     }
 
     crumbs
-  end
-
-
-  def breadcrumb_identifier(record, type)
-    case type
-    when 'resource'
-      if resolved_resource
-        id_0 = resolved_resource['id_0']
-        id_1 = resolved_resource['id_1']
-        id_2 = resolved_resource['id_2']
-        id_3 = resolved_resource['id_3']
-
-        id_components = [id_0, id_1, id_2, id_3].reject {|i| i.nil? }
-        id_components.join("-")
-      end
-    end
   end
 
 
@@ -56,7 +38,7 @@ module TreeNodes
 
     return [] if ancestor_uris.blank? || raw['_resolved_ancestors'].nil?
 
-    ASUtils.wrap(ancestor_uris.reverse.map {|uri|
+    ASUtils.wrap(ancestor_uris.reverse.map{|uri| 
       ASUtils.wrap(raw['_resolved_ancestors'].fetch(uri, nil)).first
     }).compact
   end
