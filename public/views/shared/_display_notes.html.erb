@@ -1,4 +1,7 @@
-   <% @result.notes.keys.each do |type|
+   <% unlesss @result.notes.nil? %>
+      @result.notes.keys.each do |type|
       note_struct  = @result.note(type) %>
       <%= render partial: 'shared/single_note', locals: {:type => type, :note_struct => note_struct} %>
     <% end %>
+	
+	<% end %>
