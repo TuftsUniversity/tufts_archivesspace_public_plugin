@@ -23,7 +23,7 @@ if (top.location.pathname === '/')
 
 	$(".navbar-nav li:nth-child(4)").css({"float": "right"})
 
-	$("<li><a href='https://tufts.lyrasistechnology.org/'>Home</a>").insertBefore($(".navbar-nav li:nth-child(1)"));
+	$("<li><a href='https://archives.tufts.edu'>Home</a>").insertBefore($(".navbar-nav li:nth-child(1)"));
 
 	// run test on initial page load
 	checkSize();
@@ -72,7 +72,7 @@ if (top.location.pathname !== '/')
 
 		$(".navbar-nav li:nth-child(4)").css({"float": "right"})
 		
-		$("<li><a href='https://tufts.lyrasistechnology.org/'>Home</a>").insertBefore($(".navbar-nav li:nth-child(1)"));
+		$("<li><a href='https://archives.tufts.edu'>Home</a>").insertBefore($(".navbar-nav li:nth-child(1)"));
 
 
 		// run test on initial page load

@@ -1,7 +1,7 @@
 ArchivesSpacePublic::Application.config.after_initialize do
   ResourcesController 
-	class ResourcesController < ApplicationController
-	    include ResultInfo
+class ResourcesController < ApplicationController
+  include ResultInfo
   helper_method :process_repo_info
   helper_method :process_subjects
   helper_method :process_agents
@@ -109,6 +109,9 @@ ArchivesSpacePublic::Application.config.after_initialize do
       redirect_back(fallback_location: res_id ) and return
     end
 
+
+
+
     page = Integer(params.fetch(:page, "1"))
     @results = archivesspace.advanced_search('/search',page, @criteria)
     if @results['total_hits'].blank? ||  @results['total_hits'] == 0
@@ -143,28 +146,31 @@ ArchivesSpacePublic::Application.config.after_initialize do
   end
 
 
-  def show
-    uri = "/repositories/#{params[:rid]}/resources/#{params[:id]}"
-    begin
-      @criteria = {}
-      @criteria['resolve[]']  = ['repository:id', 'resource:id@compact_resource', 'top_container_uri_u_sstr:id', 'related_accession_uris:id', 'digital_object_uris:id']
+	  def show
+		uri = "/repositories/#{params[:rid]}/resources/#{params[:id]}"
+		begin
+		  @criteria = {}
+		  @criteria['resolve[]']  = ['repository:id', 'resource:id@compact_resource', 'top_container_uri_u_sstr:id', 'related_accession_uris:id', 'digital_object_uris:id']
 
-      tree_root = archivesspace.get_raw_record(uri + '/tree/root') rescue nil
-      @has_children = tree_root && tree_root['child_count'] > 0
-      @has_containers = has_containers?(uri)
+		  tree_root = archivesspace.get_raw_record(uri + '/tree/root') rescue nil
+		  @has_children = tree_root && tree_root['child_count'] > 0
+		  @has_containers = has_containers?(uri)
 
-      @result =  archivesspace.get_record(uri, @criteria)
-      @repo_info = @result.repository_information
-      @page_title = "#{I18n.t('resource._singular')}: #{strip_mixed_content(@result.display_string)}"
-      @context = [{:uri => @repo_info['top']['uri'], :crumb => @repo_info['top']['name']}, {:uri => nil, :crumb => process_mixed_content(@result.display_string)}]
-#      @rep_image = get_rep_image(@result['json']['instances'])
-      fill_request_info
-    rescue RecordNotFound
-      record_not_found(uri, 'resource')
-    end
-  end
+		  @result =  archivesspace.get_record(uri, @criteria)
 
+		  @has_digital_objects = @result.json.fetch('has_published_digital_objects', false)
 
+		  @repo_info = @result.repository_information
+		  @page_title = "#{I18n.t('resource._singular')}: #{strip_mixed_content(@result.display_string)}"
+		  @context = [{:uri => @repo_info['top']['uri'], :crumb => @repo_info['top']['name']}, {:uri => nil, :crumb => process_mixed_content(@result.display_string)}]
+	#      @rep_image = get_rep_image(@result['json']['instances'])
+		  fill_request_info
+		rescue RecordNotFound
+		  record_not_found(uri, 'resource')
+		end
+	  end
+	  
+	  
   def resolve
     uri = "/repositories/#{params[:rid]}/resources/#{params[:id]}"
     results = archivesspace.search("ref_id:#{params[:ref_id]} AND resource:\"#{uri}\"", 1, 'type[]' => 'pui')
@@ -174,6 +180,8 @@ ArchivesSpacePublic::Application.config.after_initialize do
       record_not_resolved("#{uri}/resolve/#{params[:ref_id]}", 'archival_object')
     end
   end
+
+
 
 
   def infinite
@@ -195,32 +203,60 @@ ArchivesSpacePublic::Application.config.after_initialize do
   end
 
   def waypoints
-    search_opts = {
-      'resolve[]' => ['top_container_uri_u_sstr:id']
-    }
-    results = archivesspace.search_records(params[:urls], search_opts, true)
+		search_opts = {
+		  'resolve[]' => ['top_container_uri_u_sstr:id']
+		}
 
-    render :json => Hash[results.records.map {|record|
-                           @result = record
-                           [record.uri,
-                            render_to_string(:partial => 'infinite_item')]}]
-  end
+		urls = params[:urls]
+		waypoint_size = params[:size].to_i
+		waypoint_number = params[:number].to_i
+		collection_size = params[:collection_size].to_i
 
+		results = archivesspace.search_records(params[:urls], search_opts, true)
+
+		# setup caching
+		resource_uri = "/repositories/#{params[:rid]}/resources/#{params[:id]}"
+		resource_json = archivesspace.get_raw_record(resource_uri)
+		resource_system_mtime = resource_json.fetch("system_mtime")
+		response.set_header('Cache-Control', "max-age=#{60*60*24}")
+		response.set_header('Last-Modified', DateTime.strptime(resource_system_mtime).strftime("%a, %d %m %Y %H:%M:%S GMT"))
+
+		respond_to do |format|
+		  format.html do
+			render partial: 'infinite_items', locals: { items: results.records, start_index: (waypoint_number * waypoint_size + 1), collection_size: collection_size }
+		  end
+		  format.json do
+			render :json => Hash[results.records.map {|record|
+			  @result = record
+			  record_number = (waypoint_number * waypoint_size) + urls.index(@result.uri) + 1
+			  [record.uri,
+			   render_to_string(:partial => 'infinite_item',
+								:locals => {
+								  :record_number =>  record_number,
+								  :collection_size =>  collection_size
+								})]}]
+		  end
+		end
+
+
+	  end
+
+  
   def tree_root
 		@root_uri = "/repositories/#{params[:rid]}/resources/#{params[:id]}"
 		render json: archivesspace.get_raw_record(@root_uri + '/tree/root')
 	rescue RecordNotFound
 		render json: {}, status: 404
   end
-
+  
   def tree_node
 		@root_uri = "/repositories/#{params[:rid]}/resources/#{params[:id]}"
 		render json: archivesspace.get_raw_record(@root_uri + '/tree/node_' + params[:node])
 	rescue RecordNotFound
 		render json: {}, status: 404
   end
-
-	def tree_waypoint
+  
+   def tree_waypoint
 		@root_uri = "/repositories/#{params[:rid]}/resources/#{params[:id]}"
 		render json: archivesspace.get_raw_record(@root_uri + '/tree/waypoint_' + params[:node] + '_' + params[:offset])
 	rescue RecordNotFound
@@ -233,9 +269,8 @@ ArchivesSpacePublic::Application.config.after_initialize do
 	rescue RecordNotFound
 		render json: {}, status: 404
   end
-
-  def inventory
-		uri = "/repositories/#{params[:rid]}/resources/#{params[:id]}"
+def inventory
+        uri = "/repositories/#{params[:rid]}/resources/#{params[:id]}"
 		tree_root = archivesspace.get_raw_record(uri + '/tree/root') rescue nil
 		@has_children = tree_root && tree_root['child_count'] > 0
 		# stuff for the collection bits
@@ -253,13 +288,14 @@ ArchivesSpacePublic::Application.config.after_initialize do
 		if !@results.blank?
 			params[:q] = '*'
 			@pager =  Pager.new(@base_search, @results['this_page'], @results['last_page'])
-		else
+        else
 			@pager = nil
 		end
 
-	rescue RecordNotFound
+    rescue RecordNotFound
     record_not_found(uri, 'resource')
   end
+
 
   private
 
@@ -292,8 +328,8 @@ ArchivesSpacePublic::Application.config.after_initialize do
     end
   end
 
-
-
-
-	end
 end
+
+end 
+
+

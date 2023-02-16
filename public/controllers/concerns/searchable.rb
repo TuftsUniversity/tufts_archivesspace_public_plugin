@@ -84,17 +84,26 @@ module Searchable
   end
 
   def set_up_advanced_search(default_types = [],default_facets=[],default_search_opts={}, params={})
+    #Rails.logger.info("beginning")
+    #I18n.t("beginning")
+    
     params = sanitize_params(params)
+    #Rails.logger.info("got past sanitize")
+    #I18n.t("got past sanitize")
+   
     @search = Search.new(params)
     unless @search[:limit].blank?
       default_types = @search[:limit].split(",")
     end
+    #Rails.logger.error("past set search statement")
+    #I18n.t('past set search statement')
     set_search_statement
     raise I18n.t('navbar.error_no_term') unless @search.has_query?
-
+    
     @facet_filter = FacetFilter.new(default_facets, @search[:filter_fields],  @search[:filter_values])
     filter_query = @facet_filter.get_filter_query
-
+    #Rails.logger.error("past filter query")
+    I18n.t('past filter query')
     queries = @search[:q]
     have_query = false
     advanced_query_builder = AdvancedQueryBuilder.new
@@ -121,6 +130,8 @@ module Searchable
         advanced_query_builder.and(builder)
       end
     }
+    #Rails.logger.error("past each with index")
+    I18n.t('past each with index')
     raise I18n.t('navbar.error_no_term') unless have_query  # just in case we missed something
 
     # any search within results?  Add them to the query string

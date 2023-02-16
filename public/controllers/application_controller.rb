@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
   helper_method :process_results
 
   include JsonHelper
+  Rails.application.config.action_controller.assets_dir = File.expand_path(File.join(Rails.root, 'tufts_archivesspace_pui', 'assets'))
   helper_method :process_json_notes
 
   protect_from_forgery with: :exception

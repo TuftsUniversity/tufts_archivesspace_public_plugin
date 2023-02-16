@@ -28,6 +28,7 @@ class SearchController < ApplicationController
       search_opts = default_search_opts(DEFAULT_SEARCH_OPTS)
       search_opts['fq'] = AdvancedQueryBuilder.new.and('repository', repo_url).or('used_within_published_repository', repo_url) if @repo_id
     begin
+      Rails.logger.info("arguments to set_up_advanced_search in search controller #{DEFAULT_RES_TYPES.inspect} , #{DEFAULT_RES_FACET_TYPES.inspect}, #{search_opts.inspect}, #{params.inspect}")
       set_up_advanced_search(DEFAULT_TYPES, DEFAULT_SEARCH_FACET_TYPES, search_opts, params)
 #NOTE the redirect back here on error!
     rescue Exception => error

@@ -11,10 +11,8 @@ class NoteRenderer
 
   def self.for(type)
     result = @renderers.find {|renderer| renderer.handles_type?(type)}
-    unless result
-      $stderr.puts "No note renderer for '#{type}'"
-      result = UnhandledNoteRenderer
-    end
+
+    raise "No note renderer for '#{type}'" unless result
 
     result.new
   end
@@ -39,20 +37,13 @@ class NoteRenderer
   end
 
   def build_label(type, note)
-    note.has_key?('label') ? note['label'] : I18n.t("enumerations._note_types.#{type}", :default => '')
+    note.has_key?('label') ? note['label'] :  I18n.t("enumerations._note_types.#{type}", :default => '')
   end
 end
 
 
 class MultipartNoteRenderer < NoteRenderer
-  handles_notes [
-    'note_bioghist',
-    'note_general_context',
-    'note_legal_status',
-    'note_mandate',
-    'note_multipart',
-    'note_structure_or_genealogy',
-  ]
+  handles_notes ['note_multipart', 'note_bioghist']
 
   def render(type, note, result)
     result['label'] = build_label(type, note)
@@ -79,44 +70,24 @@ end
 
 
 class SinglepartNoteRenderer < NoteRenderer
-  handles_notes [
-    'note_abstract',
-    'note_digital_object',
-    'note_langmaterial',
-    'note_singlepart',
-    'note_text',
-  ]
+  handles_notes ['note_singlepart', 'note_text', 'note_abstract',
+                 'note_digital_object', 'note_langmaterial']
 
   def render(type, note, result)
     result['label'] = build_label(type, note)
-    result['note_text'] = ASUtils.wrap(note['content']).map { |s| "<p>#{process_mixed_content(s)}</p>" }.join.html_safe
+    result['note_text'] = ASUtils.wrap(note['content']).map {|s| process_mixed_content(s)}.join('<br/><br/>')
     result
   end
 end
 
 
 class ERBNoteRenderer < NoteRenderer
-  handles_notes [
-    'note_bibliography',
-    'note_citation',
-    'note_chronology',
-    'note_definedlist',
-    'note_index',
-    'note_orderedlist',
-    'note_outline',
-  ]
+  handles_notes ['note_chronology', 'note_definedlist', 'note_orderedlist',
+                 'note_bibliography', 'note_index', 'note_outline', 'note_citation']
 
   def render(type, note, result)
     result['label'] = build_label(type, note)
     result['note_text'] = render_partial(type, :locals => {:note => note})
     result
-  end
-end
-
-class UnhandledNoteRenderer < NoteRenderer
-  handles_notes []
-
-  def render(type, note, result)
-    {'label' => '', 'note_text' => ''}
   end
 end

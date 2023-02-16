@@ -14,17 +14,6 @@
       <%= hidden_field_tag('limit','') %>
       <%= hidden_field_tag('q[]','*') %>
 
-      <div class="col-md-6 year_from">
-        <%= label_tag(:filter_from_year, "#{t('search_results.filter.from_year')}", :class => 'sr-only') %>
-        <%= text_field_tag(:filter_from_year, nil, :id=>nil, :size => 4,:maxlength => 4, :placeholder => t('search_results.filter.from_year'),
-                           :class=>"form-control", 'aria-label' => t('search_results.filter.from_year')) %>
-      </div>
-
-      <div class="col-md-6 year_to">
-        <%= label_tag(:filter_to_year, "#{t('search_results.filter.to_year')}", :class=> 'sr-only') %>
-        <%= text_field_tag(:filter_to_year, nil, :size => 4, :maxlength => 4, :class=> "form-control", :id => nil,
-                           :placeholder => t('search_results.filter.to_year'), 'aria-label' => t('search_results.filter.to_year')) %>
-      </div>
 
     </div>
 
