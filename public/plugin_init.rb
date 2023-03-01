@@ -89,6 +89,11 @@ class ArchivesSpaceClientPublic
     ASUtils.json_parse(results.fetch('results').fetch(0).fetch('json'))
   end
 
+  def get_record_plain(uri)
+
+    JSONModel::HTTP.get_json(URI.encode(uri))
+
+  end
   def get_record(uri, search_opts = {})
     results = search_records(ASUtils.wrap(uri), search_opts, full_notes = true)
 
