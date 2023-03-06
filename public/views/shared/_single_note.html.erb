@@ -17,7 +17,7 @@
              <% unless note_struct['is_inherited'].blank? %>
                <%= inheritance(note_struct['is_inherited']).html_safe %>
              <% end %>
-             <%= subnote['_text'].html_safe %>
+             <%= subnote['_text'].html_safe.gsub(/<\/?p>/,'') %>
            </span>
          </div>
        <% end %>
@@ -26,7 +26,7 @@
          <% unless note_struct['is_inherited'].blank? %>
            <%= inheritance(note_struct['is_inherited']).html_safe %>
          <% end %>
-         <%= note_struct['note_text'].html_safe %>
+         <%= note_struct['note_text'].html_safe.gsub(/<\/?p>/,'') %>
        </div>
      <% end %>
      </div>
