@@ -11,7 +11,7 @@ if (top.location.pathname === '/')
 
 	$("#search_label, li:has(span)").css({"float": "right"});
 
-
+        
 
 	$("#search_label a").hover(function() {
 		$("#search_label a").css("pointer-events", "none")
@@ -49,6 +49,15 @@ if (top.location.pathname === '/')
 
 });
 
+
+if (/collection_organization/.test(top.location.pathname))
+{
+ document.addEventListener("DOMContentLoaded", function() {
+     $("#record-number-0").remove();
+});
+
+
+}
 if (top.location.pathname !== '/')
 	document.addEventListener("DOMContentLoaded", function() {
 		$("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
