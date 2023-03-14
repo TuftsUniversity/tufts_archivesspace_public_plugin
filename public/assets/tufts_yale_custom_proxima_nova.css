@@ -117,8 +117,8 @@
    */
 
   body {
-    /*font-family:proxima-nova,Arial,Helvetica,sans-serif;*/
-    font-family:proxima-nova,Helvetica,Arial;
+    /*font-family:"proxima-nova",Arial,Helvetica,sans-serif;*/
+    font-family:"proxima-nova";
     background-color: #ffffff;
   }
 
@@ -539,7 +539,7 @@
     padding: unset;
     margin: unset;
     padding: 2px 5px;
-    font-family: proxima-nova,Arial,Helvetica,sans-serif;
+    font-family: “proxima-nova”,Arial,Helvetica,sans-serif;"
     color: #000000;
     content: '' !important;
   }
@@ -559,7 +559,7 @@
    * Breadcrumbs shouldn't be in that font.
    */
   nav ul.breadcrumb li a {
-    font-family: proxima-nova,Arial,Helvetica,sans-serif;
+    font-family: “proxima-nova”,Arial,Helvetica,sans-serif;"
   }
 
   .record-type-badge {

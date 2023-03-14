@@ -243,7 +243,8 @@ en:
     "false": "No"
 
   navbar:
-    search_placeholder: Enter your search terms
+    #search_placeholder: Enter your search terms
+    search_placeholder: \t
     search_all: All Records
     error_no_term: No search term(s) entered.
     search_terms_results: "Your search for {{search_terms}} yielded {{number}} results"
