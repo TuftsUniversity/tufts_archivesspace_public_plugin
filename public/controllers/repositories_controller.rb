@@ -30,7 +30,7 @@ class RepositoriesController < ApplicationController
     page = params['page'] || 1 if !params.blank?
     @criteria['page_size'] = 100
     @search_data =  archivesspace.search(query, page, @criteria) || {}
-    Rails.logger.debug("TOTAL HITS: #{@search_data['total_hits']}, last_page: #{@search_data['last_page']}")
+    ##Rails.loggerdebug("TOTAL HITS: #{@search_data['total_hits']}, last_page: #{@search_data['last_page']}")
     @json = []
 
     if !@search_data['results'].blank?
@@ -43,7 +43,7 @@ class RepositoriesController < ApplicationController
           @json.push(hash)
         end
       end
-      Rails.logger.debug("First hash: #{@json[0]}")
+      ##Rails.loggerdebug("First hash: #{@json[0]}")
     else
       raise NoResultsError.new("No repository records found!")
     end
@@ -61,7 +61,7 @@ class RepositoriesController < ApplicationController
       set_up_advanced_search(DEFAULT_TYPES, DEFAULT_SEARCH_FACET_TYPES, new_search_opts, params)
     #   NOTE the redirect back here on error!
     rescue Exception => error
-      Rails.logger.debug( error.backtrace )
+      ##Rails.loggerdebug( error.backtrace )
       flash[:error] = I18n.t('errors.unexpected_error')
       redirect_back(fallback_location: "/repositories/#{@repo_id}/" ) and return
     end
@@ -72,7 +72,7 @@ class RepositoriesController < ApplicationController
       redirect_back(fallback_location: @base_search)
     else
       process_search_results(@base_search)
-      Rails.logger.debug("@repo_id: #{@repo_id}")
+      ##Rails.loggerdebug("@repo_id: #{@repo_id}")
       render
     end
   end

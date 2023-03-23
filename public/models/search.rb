@@ -30,7 +30,7 @@ class Search < Struct.new(:q, :op, :field, :limit, :from_year, :to_year, :filter
 
   # We take params either as a Hash or ActionController::Parameters object
   def initialize(params = {})
-#    Rails.logger.debug("Initializing: #{params}")
+#    ##Rails.loggerdebug("Initializing: #{params}")
     %w(q op field from_year to_year filter_fields filter_values filter_q recordtypes ).each do |f|
       if params.kind_of?(Hash)
          self[f.to_sym] = params[f.to_sym] || []
@@ -96,7 +96,7 @@ class Search < Struct.new(:q, :op, :field, :limit, :from_year, :to_year, :filter
  def get_filter_q_arr(url = nil)
    fqa = []
    self[:filter_q].each do |v|
-     Rails.logger.debug("v: #{v} CGI-escaped: #{CGI.escape(v)}")
+     ##Rails.loggerdebug("v: #{v} CGI-escaped: #{CGI.escape(v)}")
      uri = (url)? url.gsub(/#{Regexp.quote("&filter_q[]=#{CGI.escape(v)}")}(&|$)/, "\\1") : ''
      fqa.push({'v' => v, 'uri' => uri})
    end

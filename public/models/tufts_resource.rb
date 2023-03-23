@@ -218,7 +218,7 @@ ArchivesSpacePublic::Application.config.after_initialize do
 				dig_f['out'] = version['file_uri'] if version['file_uri'] != (dig_f['out'] || '')
 			  end
 			elsif !version['file_uri'].start_with?('http')
-			  Rails.logger.debug("****BAD URI? #{version['file_uri']}")
+			  ##Rails.loggerdebug("****BAD URI? #{version['file_uri']}")
 			end
 		  end
 		end

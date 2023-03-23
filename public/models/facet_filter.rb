@@ -8,7 +8,7 @@ class FacetFilter < Struct.new( :default_types, :fields, :values, :facet_types, 
     self.fields = Array.new(fields || [])
     self.values = Array.new(values || [])
     self.facet_types = default_types - fields
-    Rails.logger.debug("Default: #{default_types} fields: #{fields} facet_types: #{self.facet_types}")
+    ##Rails.loggerdebug("Default: #{default_types} fields: #{fields} facet_types: #{self.facet_types}")
     self.facet_set_arr = []
   end
   

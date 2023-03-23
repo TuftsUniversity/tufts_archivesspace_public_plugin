@@ -130,7 +130,7 @@ class ObjectsController <  ApplicationController
 
   # get archival info
   def digital_archival_info(dig_json)
-    Rails.logger.debug("****\tdigital_archival_info: #{dig_json['linked_instances']}")
+    ##Rails.loggerdebug("****\tdigital_archival_info: #{dig_json['linked_instances']}")
     unless dig_json['linked_instances'].empty? || !dig_json['linked_instances'][0].dig('ref')
       uri = dig_json['linked_instances'][0].dig('ref')
       uri << '#pui' unless uri.end_with?('#pui')

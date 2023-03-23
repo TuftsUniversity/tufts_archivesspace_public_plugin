@@ -28,7 +28,7 @@ class RequestItem < Struct.new(:user_name, :user_email, :date, :note,
       raise err unless err.message.start_with?("No value set for config parameter")
     end
     allow = !AppConfig[:pui_requests_permitted_for_containers_only] if allow.nil?
-    Rails.logger.debug("allow? #{ allow}")
+    ##Rails.loggerdebug("allow? #{ allow}")
     allow
   end
 

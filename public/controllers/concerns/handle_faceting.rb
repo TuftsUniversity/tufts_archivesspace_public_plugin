@@ -4,7 +4,7 @@ module HandleFaceting
   # does the fetches when you only want facet information
 
   def fetch_only_facets(query, facets_array, include_zero)
-#    Rails.logger.debug("Finding facets for query '#{query}'")
+#    ##Rails.loggerdebug("Finding facets for query '#{query}'")
     criteria = {}
     criteria[:page_size] = 1
     criteria['facet[]'] = facets_array

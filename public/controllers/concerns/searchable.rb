@@ -84,11 +84,11 @@ module Searchable
   end
 
   def set_up_advanced_search(default_types = [],default_facets=[],default_search_opts={}, params={})
-    #Rails.logger.info("beginning")
+    ##Rails.logger.info("beginning")
     #I18n.t("beginning")
     
     params = sanitize_params(params)
-    #Rails.logger.info("got past sanitize")
+    ##Rails.logger.info("got past sanitize")
     #I18n.t("got past sanitize")
    
     @search = Search.new(params)
@@ -379,7 +379,7 @@ module Searchable
     type = "<strong> #{I18n.t("search-limits.#{l}")}</strong>"
     type += I18n.t('search_results.in_repository', :name =>  CGI::escapeHTML(get_pretty_facet_value('repository', "/repositories/#{rid}"))) if rid
 
-    Rails.logger.debug("TYPE: #{type}")
+    ##Rails.loggerdebug("TYPE: #{type}")
     condition = " "
     @search[:q].each_with_index do |q,i|
       condition += '<ul>'
@@ -398,7 +398,7 @@ module Searchable
         condition += ' ' + I18n.t('search_results.filter.from_to', :begin => "<strong>#{from_year}</strong>", :end => "<strong>#{to_year}</strong>")
       end
       condition += '</ul>'
-      Rails.logger.debug("Condition: #{condition}")
+      ##Rails.loggerdebug("Condition: #{condition}")
     end
     @search[:search_statement] = I18n.t('search_results.search_for', :type => type,
                                         :conditions => "<li>#{condition}</li>")

@@ -23,7 +23,7 @@ class AgentsController <  ApplicationController
   }
   def index
     repo_id = params.fetch(:rid, nil)
-    Rails.logger.debug("repo_id: #{repo_id}")
+    ##Rails.loggerdebug("repo_id: #{repo_id}")
     if !params.fetch(:q, nil)
       DEFAULT_AG_SEARCH_PARAMS.each do |k, v|
         params[k] = v unless params.fetch(k,nil)
@@ -108,7 +108,7 @@ class AgentsController <  ApplicationController
         @pager = nil
       end
      @page_title = strip_mixed_content(@result['json']['title']) || "#{I18n.t('an_agent')}: #{uri}"
-      Rails.logger.debug("Agent title: #{@page_title}")
+      ##Rails.loggerdebug("Agent title: #{@page_title}")
       @context = []
     rescue RecordNotFound
       record_not_found(uri, 'pui_agent')

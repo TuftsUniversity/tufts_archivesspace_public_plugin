@@ -195,7 +195,7 @@ module ResultInfo
             end
           end
         elsif !version['file_uri'].start_with?('http')
-          Rails.logger.debug("****BAD URI? #{version['file_uri']}")
+          ##Rails.loggerdebug("****BAD URI? #{version['file_uri']}")
         end
       end
     end

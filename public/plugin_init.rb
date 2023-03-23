@@ -150,14 +150,14 @@ class ArchivesSpaceClientPublic
   def do_search(url, use_get = false)
     if use_get
       request = Net::HTTP::Get.new(url)
-      Rails.logger.debug("GET Search url: #{url}")
+      ##Rails.loggerdebug("GET Search url: #{url}")
     else
       request = Net::HTTP::Post.new(url)
-      Rails.logger.debug("POST Search url: #{url} ")
+      ##Rails.loggerdebug("POST Search url: #{url} ")
     end
     response = do_http_request(request)
     if response.code != '200'
-      Rails.logger.debug("Code: #{response.code}")
+      ##Rails.loggerdebug("Code: #{response.code}")
       raise RequestFailedException.new("#{response.code}: #{response.body}")
     end
     results = ASUtils.json_parse(response.body)

@@ -65,7 +65,7 @@ class SubjectsController <  ApplicationController
   end
 
   def search
-Rails.logger.debug("we hit search!")
+##Rails.loggerdebug("we hit search!")
   # need at least q[]=WHATEVER&op[]=OR&field[]=title&from_year[]=&to_year[]=&limit=subject
      @base_search  =  "/subjects/search?"
     page = Integer(params.fetch(:page, "1"))
