@@ -42,7 +42,7 @@ if (top.location.pathname === '/')
 	
 	$("h2").prependTo($("#content"));	
 	$("<br /><br />").appendTo($("h2"));
-	$("#content .search").insertAfter($("h2"));
+	$("#content .search").insertBefore($("#content .row"));
 	
 
 
