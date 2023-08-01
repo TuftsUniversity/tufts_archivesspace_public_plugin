@@ -1,5 +1,10 @@
 <% if record['json']['representative_file_version'].present? %>
+<%# file_versions = JSON.parse(record['json']['file_versions']) %>
+<%# full_image_uri = record['json']['file_versions'].select {|v| v['file_uri'].match(/handle/)['file_uri']} %>
+<% full_image_uri = record['json']['file_versions'].select {|v| v['file_uri'].match(/handle/)}.first['file_uri'] %>
+
 <div class="available-digital-objects">
+  
   <div class="objectimage">
     <div class="panel panel-default">
       <%
@@ -8,7 +13,7 @@
         a_uri = rfv['derived_from'] || rfv['link_uri']
       %>
       <%= render partial: 'shared/representative_file_version_record', locals: {
-        :a_uri => a_uri,
+        :a_uri => full_image_uri,
         :img_uri => img_uri,
         :caption => rfv['caption']
       } %>
