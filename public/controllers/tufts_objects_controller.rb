@@ -96,21 +96,26 @@ class ObjectsController <  ApplicationController
         @has_children = tree_root && tree_root['child_count'] > 0
       end
 
-      begin
+      #begin
         @repo_info =  @result.repository_information
+        #Rails.logger.debug("got to repo info")
+        #Rails.logger.debug("result? #{@result.inspect}")
         @page_title = @result.display_string
         @context = [{:uri => @repo_info['top']['uri'], :crumb => @repo_info['top']['name']}].concat(@result.breadcrumb)
         fill_request_info
         if @result['primary_type'] == 'digital_object' || @result['primary_type'] == 'digital_object_component'
+          Rails.logger.debug("got to digital object.  if it doesn't get to the next line, the -process_digital method isn't availavle somehow")
           @dig = process_digital(@result['json'])
+          Rails.logger.debug("got through process digital")
         else
+          Rails.logger.debug("got to else in digital object.  if it doesn't get to the next method, it's because a method isn't availalbe")
           @dig = process_digital_instance(@result['json']['instances'])
           process_extents(@result['json'])
         end
-      rescue Exception => error
-        Pry::ColorPrinter.pp error.backtrace
-        raise error
-      end
+      #rescue Exception => error
+      #  Pry::ColorPrinter.pp error.backtrace
+      #  raise error
+      #end
       render
     rescue RecordNotFound
       type = "#{(params[:obj_type] == 'archival_objects' ? 'archival' : 'digital')}_object"
