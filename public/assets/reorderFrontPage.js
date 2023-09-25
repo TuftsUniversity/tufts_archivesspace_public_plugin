@@ -42,7 +42,7 @@ if (top.location.pathname === '/')
 	
 	$("h2").prependTo($("#content"));	
 	$("<br /><br />").appendTo($("h2"));
-	$("#content .search").insertAfter($("h2"));
+	$("#content .search").insertBefore($("#content .row"));
 	
 
 
@@ -76,14 +76,7 @@ if (top.location.pathname !== '/')
 		});
 
 
-                $(".agents_list").wrap("<div></div>");
-                $(".agents_list li").contents().unwrap();
-                $(".agents_list").contents().wrap("<div id='agents-div'></div>");
-                $(".agents_list").contents().unwrap();
-                //$("#agents-content").wrap("<p id='agents-content-par'></p>");
-                //$("#agents-content-par").unwrap().wrap("<div id='agents-div'></div>);
 
-                
 		$(".navbar-nav").css({"width": "100%"})
 
 		$(".navbar-nav li:nth-child(4)").css({"float": "right"})

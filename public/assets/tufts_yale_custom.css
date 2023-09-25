@@ -567,15 +567,7 @@
     font-weight: 500;
     white-space: pre-wrap;
   }
-  
-.agents_list > li {
-   float: left !important;
-   display: block !important;
-}
 
-.single_note h2 {
-  display: block;
-}
 
  
   /* footer stuff, first pass (copied from FindIt) */
