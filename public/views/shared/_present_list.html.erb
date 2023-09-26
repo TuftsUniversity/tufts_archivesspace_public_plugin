@@ -1,9 +1,7 @@
 <% if list.kind_of? Hash
    list.each do |k,v| %>
-   <h3><%= k %></h3>
-   <ul class="present_list <%= list_clss %>">
+   <div><h3><%= k %></h3>
    <% v.each do |item | %>
-     <li>
      <% unless item['inherit'].blank? %>
 	<%= item['inherit'].html_safe %>
      <% end %>
@@ -14,14 +12,12 @@
      <% unless item['uri'].blank? %>
      </a>
      <% end %>
-     </li>
    <% end %>
-   </ul>
+   </div>
   <% end %>
 <% else %>
-  <ul class="present_list <%= list_clss %>">
+    <div>
     <% list.each do |item| %>
-     <li>
        <% if list_clss == 'subjects_list' && item['jsonmodel_type'].start_with?('agent_') %>
          <a href="<%= app_prefix(item['uri']) %>">
            <%= item['title'] %>
@@ -46,7 +42,6 @@
          <%= item %>
        <% end %>
        <% end %>
-     </li>
     <% end %>
-  </ul>
+    </div>
  <% end %>

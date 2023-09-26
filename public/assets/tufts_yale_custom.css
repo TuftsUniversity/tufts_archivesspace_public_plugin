@@ -567,7 +567,15 @@
     font-weight: 500;
     white-space: pre-wrap;
   }
+  
+.agents_list > li {
+   float: left !important;
+   display: block !important;
+}
 
+.single_note h2 {
+  display: block;
+}
 
  
   /* footer stuff, first pass (copied from FindIt) */
@@ -946,7 +954,16 @@
   , button.resource, button.subject, button.agent {
     color: #00171f;
   }
+  
+  /* added by HLS 2023-08-18 to prevent search results thumbnail caption cutoff */
 
+  .result-repfv__figcaption {
+   text-overflow: ellipsis;
+   white-space: nowrap;
+   overflow: hidden; 
+   
+    
+  }
   /* line 25, archivesspace/record-type-badge.scss
   adding a new color for archival objects that are a "series"
   oi.
