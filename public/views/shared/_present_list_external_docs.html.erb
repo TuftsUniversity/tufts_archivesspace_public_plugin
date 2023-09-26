@@ -1,6 +1,6 @@
 <% if list.kind_of? Hash
    list.each do |k,v| %>
-  <div> <h4><%= k %></h4>
+   <h4><%= k %></h4>
    <ul class="present_list <%= list_clss %>">
    <% v.each do |item | %>
      <li>
@@ -14,12 +14,14 @@
      <% unless item['uri'].blank? %>
      </a>
      <% end %>
+     </li>
    <% end %>
-   </div>
+   </ul>
   <% end %>
 <% else %>
+  <ul class="present_list <%= list_clss %>">
     <% list.each do |item| %>
-       <div>
+     <li>
        <% if list_clss == 'subjects_list' && item['jsonmodel_type'].start_with?('agent_') %>
          <a href="<%= item['uri'] %>">
            <%= item['title'] %>
@@ -41,6 +43,7 @@
          <%= item %>
        <% end %>
        <% end %>
-    </div>
+     </li>
     <% end %>
+  </ul>
  <% end %>
