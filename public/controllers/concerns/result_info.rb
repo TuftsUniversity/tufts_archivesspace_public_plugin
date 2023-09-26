@@ -105,16 +105,25 @@ module ResultInfo
 
 # digital object processing
   def process_digital(json)
+    begin
+    Rails.logger.debug("got into process digital function")
     dig_obj = {}
     unless json['digital_object_id'].blank? ||  !json['digital_object_id'].start_with?('http')
       dig_obj['out'] = json['digital_object_id']
     end
+    Rails.logger.debug("before process file versions")
     dig_obj = process_file_versions(json)
+    Rails.logger.debug("got past process file versions")
     unless dig_obj.blank?
       dig_obj['material'] = json['digital_object_type'].blank? ? '' : '(' << json['digital_object_type'] << ')'
       dig_obj['caption'] = CGI::escapeHTML(strip_mixed_content(json['title'])) if dig_obj['caption'].blank? && !dig_obj['thumb'].blank?
     end
+    Rails.logger.debug("#{dig_obj.inspect}")
+    Rails.logger.debug("digital object")
     dig_obj.blank? ? [] : [dig_obj]
+    rescue
+      Rails.logger.debug("failure of process digital")
+    end
   end
 
 
@@ -195,7 +204,7 @@ module ResultInfo
             end
           end
         elsif !version['file_uri'].start_with?('http')
-          ##Rails.loggerdebug("****BAD URI? #{version['file_uri']}")
+          Rails.loggerdebug("****BAD URI? #{version['file_uri']}")
         end
       end
     end
