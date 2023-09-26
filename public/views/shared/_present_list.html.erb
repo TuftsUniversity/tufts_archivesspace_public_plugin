@@ -1,0 +1,47 @@
+<% if list.kind_of? Hash
+   list.each do |k,v| %>
+   <div><h3><%= k %></h3>
+   <% v.each do |item | %>
+     <% unless item['inherit'].blank? %>
+	<%= item['inherit'].html_safe %>
+     <% end %>
+     <% unless item['uri'].blank? %>
+     <a href="<%= app_prefix(item['uri']) %>">
+     <% end %>
+     <%= item['title'] %>
+     <% unless item['uri'].blank? %>
+     </a>
+     <% end %>
+   <% end %>
+   </div>
+  <% end %>
+<% else %>
+    <div>
+    <% list.each do |item| %>
+       <% if list_clss == 'subjects_list' && item['jsonmodel_type'].start_with?('agent_') %>
+         <a href="<%= app_prefix(item['uri']) %>">
+           <%= item['title'] %>
+         </a>
+         <% if item['_relator'] %>
+           (<%= t("enumerations.linked_agent_archival_record_relators.#{item['_relator']}", :default => item['_relator'])  %>)
+         <% end %>
+         <%= item['_terms'].map{|t| " -- #{t['term']}"}.join %>
+       <% else %>
+       <% if item.kind_of? Hash %>
+        <% unless item['uri'].blank? %>
+         <a href="<%= app_prefix(item['uri']) %>">
+        <% end %>
+        <%= item['title'] %>
+        <% unless item['uri'].blank? %>
+         </a>
+         <% if list_clss == 'subjects_list' && AppConfig[:show_source_in_subject_listing] %>
+          <strong><%= t("subject.subject_source") %>: </strong><%= t("enumerations.subject_source.#{item['source']}") %>
+         <% end %>
+        <% end %>
+       <% else %>
+         <%= item %>
+       <% end %>
+       <% end %>
+    <% end %>
+    </div>
+ <% end %>
