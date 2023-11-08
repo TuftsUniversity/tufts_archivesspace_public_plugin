@@ -26,8 +26,8 @@ module ManipulateNode
       .gsub("item>", "li>")
 
     unless opts[:preserve_newlines]
-      txt = txt.gsub(/\n\n/, "<br /><br />")
-              .gsub(/\r\n\r\n/, "<br /><br />")
+      txt = txt.gsub(/\n\n/, "<br><br>")
+              .gsub(/\r\n\r\n/, "<br><br>")
     end
 
     txt = txt.gsub(/&(?![A-Za-z]+;|#[0-9]+;)/, '&amp;')
