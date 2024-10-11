@@ -68,7 +68,7 @@ if (top.location.pathname !== '/')
 		$("#search_label a").css({"cursor": "default", "display": "inline-block !important", "font-family": "Gotham SSm A,Gotham SSm B,Arial,Helvetica,sans-serif !important", "color": "#ffffff !important", "text-decoration": "none !important", "font-weight": "bold !important"});
 
 
-		$("#search_label, li:has(span)").css({"float": "right"});
+		//$("#search_label, li:has(span)").css({"float": "right"});
 
 
 
