@@ -12,13 +12,13 @@ class Record
               :identifier, :classifications, :level, :other_level, :linked_digital_objects,
               :container_titles_and_uris
 
-  attr_accessor :criteria
+  attr_accessor :criteria, :highlights
 
   ABSTRACT = %w(abstract scopecontent)
 
   def initialize(solr_result, full = false)
     @raw = solr_result
-    if solr_result['json'].kind_of? Hash
+    if solr_result['json'].is_a? Hash
       @json = solr_result['json']
     else
       @json = ASUtils.json_parse(solr_result['json']) || {}
@@ -34,13 +34,12 @@ class Record
 
     @level = raw['level']
     @other_level = json['other_level']
-
     @display_string = parse_full_title
     @container_display = parse_container_display
     @container_summary_for_badge = parse_container_summary_for_badge
     @container_titles_and_uris = parse_container_display(:include_uri => true)
     @linked_digital_objects = parse_digital_object_instances
-    @notes =  parse_notes
+    @notes = parse_notes
     @dates = parse_dates
     @lang_materials = parse_lang_materials
     @external_documents = parse_external_documents
@@ -51,6 +50,27 @@ class Record
     @classifications = parse_classifications
     @agents = parse_agents(subjects)
     @extents = parse_extents
+  end
+
+  def apply_highlighting
+    if highlights.key?('title') && highlights['title'].length == 1
+      @display_string = highlights['title'][0]
+    end
+
+    # Exclude any redundant fields below that are not meant to be used in the public intreface.
+    exclude_fields = [
+      'title',
+      'notes',
+      'summary',
+      'agents',
+      'agents_text',
+      'repository',
+      'classification_uris'
+    ]
+
+    @highlights = highlights.reject do |key, _|
+      exclude_fields.include?(key)
+    end
   end
 
   def [](k)
@@ -66,7 +86,7 @@ class Record
   end
 
   def note(type)
-    if notes[type]
+    if notes && notes[type]
       note = notes[type][0].clone
       for i in 1...notes[type].length
         note = merge_notes(note, notes[type][i])
@@ -83,103 +103,14 @@ class Record
     build_request_item
   end
 
-  def digital_objects?
-    Array(json['instances']).any?{|instance| instance['digital_object'] && instance.dig('digital_object', '_resolved', 'publish')}
-  end
-
-  def thumbnail_embed
-    return @thumbnail_embed if @thumbnail_embed
-
-    file_version_candidates = fetch_candidate_file_versions
-
-    result = file_version_candidates.detect{|fv| fv['is_display_thumbnail']}
-    result ||= file_version_candidates.detect{|fv| fv['use_statement'] == 'image-thumbnail'}
-
-    @thumbnail_embed = result
-  end
-
-  def thumbnail_link
-    return @thumbnail_link if @thumbnail_link
-
-    file_version_candidates = fetch_candidate_file_versions
-
-    result = file_version_candidates.detect{|fv| fv['is_representative']}
-    result ||= file_version_candidates.detect{|fv| fv['use_statement'] != 'image-thumbnail' && fv['use_statement'] != 'embed'}
-    result ||= file_version_candidates.first
-
-    @thumbnail_link = result
-  end
-
-  def thumbnail_caption
-    file_version_candidates = fetch_candidate_file_versions
-
-    return display_string if file_version_candidates.empty?
-
-    # 1. take the representative caption
-    if (representative = file_version_candidates.detect{|fv| fv['is_representative']})
-      if representative['caption']
-        return representative['caption']
-      elsif (digital_object_title = representative.dig('_digital_object', 'title'))
-        return digital_object_title
-      end
+  def parse_full_title(infinite_item = false)
+    unless infinite_item || json['title_inherited'].blank? || (json['display_string'] || '') == json['title']
+      return "#{json['title']}, #{json['display_string']}"
     end
-
-    # 2. otherwise take the embedded thumbnail caption or digital object title
-    if (embed = thumbnail_embed)
-      if embed['caption']
-        return embed['caption']
-      elsif (digital_object_title = embed.dig('_digital_object', 'title'))
-        return digital_object_title
-      end
-    end
-
-    # 3. ok.. take the first digital object's title
-    file_version_candidates.each do |fv|
-      if (digital_object_title = fv.dig('_digital_object', 'title'))
-        return digital_object_title
-      end
-    end
-
-    # 4. if all fails then take the current record's title
-    display_string
-  end
-
-  def iiif_manifest
-    return @iiif_embed if @iiif_embed
-
-    file_version_candidates = fetch_candidate_file_versions
-
-    @iiif_embed = file_version_candidates.detect do |fv|
-      fv['file_format_name'] == AppConfig['iiif_file_format_name'] &&
-        fv['use_statement'] == AppConfig['iiif_use_statement'] &&
-        fv['xlink_show_attribute'] == AppConfig['iiif_xlink_show_attribute']
-    end
-  end
-
-
-  def build_instance_display_string(instance)
-    if sc = instance.fetch('sub_container', nil)
-      parse_sub_container_display_string(sc, instance)
-    elsif digital_object = instance.dig('digital_object', '_resolved')
-      digital_object.fetch('title')
-    else
-      raise "Instance not supported: #{instance}"
-    end
-  end
-
-  def show_thumbnail?
-    fetch_candidate_file_versions.any?
+    return process_mixed_content_title(json['display_string'] || json['title'])
   end
 
   private
-
-  def parse_full_title
-    ft =  process_mixed_content(json['display_string'] || json['title'], :preserve_newlines => true)
-    unless json['title_inherited'].blank? || (json['display_string'] || '') == json['title']
-      ft = I18n.t('inherited', :title => process_mixed_content(json['title'], :preserve_newlines => true), :display => ft)
-    end
-    ft
-  end
 
   def parse_identifier
     json.dig('_composite_identifier') || json.dig('component_id') ||
@@ -195,7 +126,7 @@ class Record
     include_uri = opts.fetch(:include_uri, false)
     containers = []
 
-    if !json['instances'].blank? && json['instances'].kind_of?(Array)
+    if !json['instances'].blank? && json['instances'].is_a?(Array)
       json['instances'].each do |inst|
         sub_container = inst.fetch('sub_container', nil)
 
@@ -245,24 +176,23 @@ class Record
   end
 
   def parse_notes
+    notes_html = if json.has_key?('notes')
+                   process_json_notes(json['notes'], (!full ? ABSTRACT : nil))
+                 else
+                   {}
+                 end
 
-    if json.has_key?('notes') && json.has_key?('lang_materials')
-      notes_html =  process_json_notes(json['notes'], (!full ? ABSTRACT : nil))
-
+    if json.has_key?('lang_materials')
       # We need to do some special manipuation for language of material notes since they are held inside of a lang_material record, not notes
-      lang_material_notes = json['lang_materials'].map {|l| l['notes']}.compact.reject {|e|  e == [] }.flatten
+      lang_material_notes = json['lang_materials'].map {|l| l['notes']}.compact.reject {|e| e == [] }.flatten
       lang_notes = process_json_notes(lang_material_notes.flatten, (!full ? ABSTRACT : nil))
       unless lang_notes.empty?
         lang_notes['langmaterial'].each do |s|
           s['is_inherited'] = json['lang_materials'][0].dig('_inherited')
         end
       end
-      
+
       notes_html = notes_html.merge(lang_notes)
-    elsif json.has_key?('notes')
-      notes_html =  process_json_notes(json['notes'], (!full ? ABSTRACT : nil))
-    else
-      {}
     end
   end
 
@@ -272,8 +202,9 @@ class Record
     dates = []
     #adding the date label & type below so that it'll be easy to figure out which dates to include in other mappings, such as the schema.org mappings
     (json['dates'] || json['dates_of_existence']).each do |date|
-      label, exp = parse_date(date)
-      dates.push({'final_expression' => label + exp, '_inherited' => date.dig('_inherited'), 'label' => date['label'], 'date_type' => date['date_type']})
+      label, exp, label_value = parse_date(date)
+      label_string = I18n.t("enumerations.date_label.#{label_value}", :default => label_value)
+      dates.push({'final_expression' => label_string + ": " + exp, '_inherited' => date.dig('_inherited'), 'label' => label_value, 'date_type' => date['date_type']})
     end
 
     dates
@@ -305,7 +236,7 @@ class Record
       if doc['publish']
         extd = {}
         extd['title'] = doc['title']
-        extd['uri'] = doc['location'].start_with?('http') ? doc['location'] :  ''
+        extd['uri'] = doc['location'].start_with?('http') ? doc['location'] : ''
         external_documents.push(extd)
       end
     end
@@ -314,8 +245,7 @@ class Record
   end
 
   def parse_repository
-
-    if raw['_resolved_repository'].kind_of?(Hash)
+    if raw['_resolved_repository'].is_a?(Hash)
       rr = raw['_resolved_repository'].first
 
       if !rr[1][0]['json'].blank?
@@ -327,18 +257,17 @@ class Record
   end
 
   def parse_resource
-    if raw['_resolved_resource'].kind_of?(Hash)
-      keys  = raw['_resolved_resource'].keys
+    if raw['_resolved_resource'].is_a?(Hash)
+      keys = raw['_resolved_resource'].keys
       if keys
         rr = raw['_resolved_resource'][keys[0]]
-        return  rr[0]
+        return rr[0]
       end
     end
   end
 
   def parse_top_container
-    if raw['_resolved_top_container_uri_u_sstr'].kind_of?(Hash)
-#Pry::ColorPrinter.pp result['_resolved_top_container_uri_u_sstr']
+    if raw['_resolved_top_container_uri_u_sstr'].is_a?(Hash)
       rr = raw['_resolved_top_container_uri_u_sstr'].first
       if !rr[1][0]['json'].blank?
         return ASUtils.json_parse( rr[1][0]['json'])
@@ -388,12 +317,8 @@ class Record
 
         role = relationship['role']
 
-        if role == 'subject'
-          subjects_arr.push(relationship['_resolved'].merge('_relator' => relationship['relator'], '_terms' => relationship['terms']))
-        else
-          agents_h[role] ||= []
-          agents_h[role] << relationship
-        end
+        agents_h[role] ||= []
+        agents_h[role] << relationship
       end
     end
 
@@ -407,16 +332,16 @@ class Record
 
     unless  json['extents'].blank?
       json['extents'].each do |ext|
-        display = ''
         type = I18n.t("enumerations.extent_extent_type.#{ext['extent_type']}", default: ext['extent_type'])
         display = I18n.t('extent_number_type', :number => ext['number'], :type => type)
         summ = ext['container_summary'] || ''
         summ = "(#{summ})" unless summ.blank? || ( summ.start_with?('(') && summ.end_with?(')'))  # yeah, I coulda done this with rexep.
         display << ' ' << summ
-        display << I18n.t('extent_phys_details',:deets => ext['physical_details']) unless  ext['physical_details'].blank?
-        display << I18n.t('extent_dims', :dimensions => ext['dimensions']) unless  ext['dimensions'].blank?
+        display << I18n.t('extent_phys_details', :deets => ext['physical_details']) unless ext['physical_details'].blank?
+        display << I18n.t('extent_dims', :dimensions => ext['dimensions']) unless ext['dimensions'].blank?
 
-        results.push({'display' => display, '_inherited' => ext.dig('_inherited')})
+        inherited = ext.respond_to?(:dig) ? ext.dig('_inherited') : {}
+        results.push({'display' => display, '_inherited' => inherited})
       end
     end
 
@@ -427,17 +352,17 @@ class Record
     info = {}
     info['top'] = {}
     unless resolved_repository.nil?
-      %w(name uri url parent_institution_name image_url repo_code).each do | item |
+      %w(name uri url parent_institution_name image_url repo_code).each do |item|
         info['top'][item] = resolved_repository[item] unless resolved_repository[item].blank?
       end
-      unless resolved_repository['agent_representation'].blank? || resolved_repository['agent_representation']['_resolved'].blank? || resolved_repository['agent_representation']['_resolved']['jsonmodel_type'] != 'agent_corporate_entity'
+      unless resolved_repository['agent_representation'].blank? || resolved_repository['agent_representation']['_resolved'].blank? || resolved_repository['agent_representation']['_resolved']['agent_contacts'].blank? || resolved_repository['agent_representation']['_resolved']['jsonmodel_type'] != 'agent_corporate_entity'
         in_h = resolved_repository['agent_representation']['_resolved']['agent_contacts'][0]
         %w{city region post_code country email }.each do |k|
           info[k] = in_h[k] if in_h[k].present?
         end
         if in_h['address_1'].present?
           info['address'] = []
-          [1,2,3].each do |i|
+          [1, 2, 3].each do |i|
             info['address'].push(in_h["address_#{i}"]) if in_h["address_#{i}"].present?
           end
         end
@@ -463,16 +388,6 @@ class Record
         resolved.first
       end
     end
-  end
-
-  def parse_top_container_location(top_container)
-    container_locations = top_container.dig('container_locations')
-
-    return if container_locations.blank?
-
-    current_location = container_locations.find{|c| c['status'] == 'current'}
-
-    current_location.dig('_resolved')
   end
 
   def parse_sub_container_display_string(sub_container, inst, opts = {})
@@ -552,7 +467,7 @@ class Record
   def build_request_item_container_info
     container_info = {}
 
-    %i(top_container_url container location_title location_url machine barcode).each {|sym| container_info[sym] = [] }
+    %i(top_container_url container machine barcode).each {|sym| container_info[sym] = [] }
 
     unless json['instances'].blank?
       json['instances'].each do |instance|
@@ -574,16 +489,6 @@ class Record
           top_container_json = ASUtils.json_parse(top_container.fetch('json'))
           hsh[:barcode] = top_container_json.dig('barcode')
 
-          location = parse_top_container_location(top_container_json)
-
-          if (location)
-            hsh[:location_title] = location.dig('title')
-            hsh[:location_url] = location.dig('uri')
-          else
-            hsh[:location_title] = ''
-            hsh[:location_url] = ''
-          end
-
           restricts = top_container_json.dig('active_restrictions')
           if restricts
             restricts.each do |r|
@@ -593,8 +498,6 @@ class Record
           end
         else
           hsh[:barcode] = ''
-          hsh[:location_title] = ''
-          hsh[:location_url] = ''
         end
 
         hsh.keys.each {|sym| container_info[sym].push(hsh[sym] || '')}
@@ -604,30 +507,4 @@ class Record
     container_info
   end
 
-  def fetch_candidate_file_versions
-    return @file_version_candidates if @file_version_candidates
-
-    file_version_candidates = []
-
-    if ['resource', 'archival_object', 'accession'].include?(@primary_type)
-      Array(json['instances']).each do |instance|
-        if (digital_object = instance.dig('digital_object', '_resolved'))
-          # skip unpublished digital objects
-          next unless digital_object['publish']
-
-          if instance['is_representative']
-            file_version_candidates = Array(digital_object['file_versions']).map{|fv| fv['_digital_object'] = digital_object; fv}
-            break
-          else
-            file_version_candidates += Array(digital_object['file_versions']).map{|fv| fv['_digital_object'] = digital_object; fv}
-          end
-        end
-      end
-    else
-      file_version_candidates = Array(json['file_versions'])
-    end
-
-    # drop unpublished file versions and cache
-    @file_version_candidates = file_version_candidates.reject{|fv| !fv['publish'] }
-  end
 end

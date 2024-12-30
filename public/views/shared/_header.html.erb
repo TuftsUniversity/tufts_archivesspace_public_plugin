@@ -1,80 +1,16 @@
-<!--
 <section id="header">
-<div class="alert-info block-views-blockalert-block-1">
-      <div class="views-row">
-         <div class="views-field views-field-body">
-               <p class="alert-title field-content">Archives@Tufts maintenance Friday 2024-01-12 at 5:00 PM until Sunday 2024-01-14 at 12:00PM</p>
-         </div>
-         <div class="views-field views-field-body">
-            <div class="field-content">
-               <p class="alert-body">Archives@Tufts is undergoing maintenance during this time period.  Not all features of the site may work while maintenance is in progress</p>
-            </div>
-         </div>
-     </div>
-</div>
-
-</section>
--->
-<!--
-<section id="header">
-<div class="alert-info block-views-blockalert-block-1">
-      <div class="views-row">
-         <div class="views-field views-field-body">
-               <p class="alert-title field-content">COVID-19 and DCA</p>
-         </div>
-         <div class="views-field views-field-body">
-            <div class="field-content">
-               <p class="alert-body"><a href="https://tarc.tufts.edu/digital-collections-and-archives-covid19-updates">See DCA updates here</a>. For the latest updates and guidance from Tufts University, please visit <a href="https://go.tufts.edu/coronavirus">https://go.tufts.edu/coronavirus</a>.</p>
-            </div>
-         </div>
-     </div>
-</div>
-</section>
--->
-
-<section id="header">
-	<!--<link rel="stylesheet" type="text/css" href="https://cloud.typography.com/6706294/6678772/css/fonts.css" />-->
-	<link rel="stylesheet" type="text/css" href="https://use.typekit.net/lvm2bzl.css" />
-        <div class="row" id="header-1">
-	<span class="col-sm-1">
-	
-		<span class="tufts-header-logo"><a href="https://tufts.edu">
-			<img alt="Tufts logo" src="/assets/images/whiteTufts.svg" /></a>
-		</span>
-	</span>
-	</div>
-</section>
-
-<section id="header" class="second-header">
-	<div class="row" id="header-2">
-
-
-		<div id="left">
-		<a href="https://tarc.tufts.edu">
-	           <img class="logo wider" src="<%= asset_path(AppConfig[:pui_branding_img]) %>" alt="" />
-                   <img class="logo mobile" src="/assets/images/tarc_stacked.svg" alt="" />
-		</a>
-		
-		
-	
-		</div>
-		
-	<div id="spacer-1">
-	
-		<a href="https://tarc.tufts.edu/research/ask-an-archivist">Ask an Archivist</a>
-		|
-		<a href="https://tascr.tufts.edu/">Research Account (TASCR)</a>
-		
-	</div>
-
-
+  <div class="d-flex row align-items-center px-4">
+    <div class="col-sm-9">
+      <h1>
+        <% unless request.original_fullpath == '/' %>
+          <a title="<%=t('brand.title_link_text') %>" href="<%= AppConfig[:public_proxy_url] %>">
+        <% end %>
+        <%= t('brand.title') %>
+        <% unless request.original_fullpath == '/' %>
+          </a>
+        <% end %>
+      </h1>
+    </div>
+    <div class="col-sm-3 d-none d-md-block"><img class="logo" src="<%= asset_path(AppConfig[:pui_branding_img]) %>" alt="<%= AppConfig[:pui_branding_img_alt_text] %>" /></div>
   </div>
-
 </section>
-
-
-
-
-
-
-    

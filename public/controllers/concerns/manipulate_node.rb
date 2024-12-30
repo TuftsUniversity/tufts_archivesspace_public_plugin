@@ -10,6 +10,12 @@ module ManipulateNode
   #    item.name = "li"
   #  end
 
+  def process_mixed_content_title(text)
+    return '' if !text
+
+    Nokogiri::HTML::DocumentFragment.parse(text).to_html
+  end
+
   def process_mixed_content(in_txt, opts = {})
     return if !in_txt
 
@@ -26,8 +32,8 @@ module ManipulateNode
       .gsub("item>", "li>")
 
     unless opts[:preserve_newlines]
-      txt = txt.gsub(/\n\n/, "<br><br>")
-              .gsub(/\r\n\r\n/, "<br><br>")
+      txt = txt.gsub(/\n\n/, "<br /><br />")
+              .gsub(/\r\n\r\n/, "<br /><br />")
     end
 
     txt = txt.gsub(/&(?![A-Za-z]+;|#[0-9]+;)/, '&amp;')

@@ -9,30 +9,22 @@ module Searchable
   class NoResultsError < StandardError; end
 
 
-  def set_up_search(default_types = [],default_facets=[],default_search_opts={}, params={}, q='')
-    params = sanitize_params(params)
+  def set_up_search(default_types = [], default_facets=[], default_search_opts={}, params={}, q='')
     @search = Search.new(params)
-    limit = params.fetch(:limit,'')
+    limit = params.fetch(:limit, '')
     field = params.fetch(:field, nil)
     if !limit.blank?
       default_types = [limit]
     end
-
-    @facet_filter = FacetFilter.new(default_facets, params.fetch(:filter_fields,[]), params.fetch(:filter_values,[]))
-    filter_query = @facet_filter.get_filter_query
-
     @query = ''
     q = nil if q.strip.blank?
     record_types = params.fetch(:recordtypes, nil)
     if record_types
-      record_types_limit = AdvancedQueryBuilder.new
       record_types.each do |type|
-        record_types_limit.or('primary_type', type)
+        @query = "primary_type:#{type} #{@query}"
         @base_search += "&recordtypes[]=#{type}"
       end
-
-      filter_query.and(record_types_limit)
-      @query = '*'
+      @query = "publish:true AND (#{@query})"
     elsif q
       @query = q
       @base_search = "#{@base_search}q=#{q}"
@@ -46,72 +38,59 @@ module Searchable
     res_id = params.fetch(:res_id, '')
     repo_id = params.fetch(:repo_id, '')
     if !res_id.blank?
-      filter_query.add('resource', res_id)
-      @base_search = "#{@base_search}&res_id=#{res_id.gsub('/','%2f')}"
+      @query = @query != '*' ? "#{@query} AND " : ''
+      @query += "resource:\"#{res_id}\""
+      @base_search = "#{@base_search}&res_id=#{res_id.gsub('/', '%2f')}"
     elsif !repo_id.blank?
-      filter_query.add('repository', repo_id)
-      @base_search = "#{@base_search}&repo_id=#{repo_id.gsub('/','%2f')}"
+      @query = @query != '*' ? "#{@query} AND " : ''
+      @query += "repository:\"#{repo_id}\""
+      @base_search = "#{@base_search}&repo_id=#{repo_id.gsub('/', '%2f')}"
     end
     years = get_filter_years(params)
     if !years.blank?
-      builder = AdvancedQueryBuilder.new
-      builder.and('years', AdvancedQueryBuilder::RangeValue.new(years['from_year'], years['to_year']), 'range', false, false)
-      filter_query.and(builder)
+      @query = "#{@query} AND years:[#{years['from_year']} TO #{years['to_year']}]"
       @base_search = "#{@base_search}&filter_from_year=#{years['from_year']}&filter_to_year=#{years['to_year']}"
     end
-
     @base_search += "&limit=#{limit}" if !limit.blank?
+#    Rails.logger.debug("SEARCHABLE BASE: #{@base_search}")
     @criteria = default_search_opts
+    @facet_filter = FacetFilter.new(default_facets, params.fetch(:filter_fields, []), params.fetch(:filter_values, []))
     # building the query for the facetting
     type_query_builder = AdvancedQueryBuilder.new
     default_types.reduce(type_query_builder) {|b, type|
       b.or('types', type)
     }
-    @criteria['filter'] = filter_query.and('publish', true).and(type_query_builder).build.to_json
+    @criteria['filter'] = @facet_filter.get_filter_query.and(type_query_builder).build.to_json
     @criteria['facet[]'] = @facet_filter.get_facet_types
     @criteria['page_size'] = params.fetch(:page_size, AppConfig[:pui_search_results_page_size])
   end
 
-  def set_up_and_run_search(default_types = [],default_facets=[],default_search_opts={}, params={})
+  def set_up_and_run_search(default_types = [], default_facets=[], default_search_opts={}, params={})
     set_up_advanced_search(default_types, default_facets, default_search_opts, params)
     page = Integer(params.fetch(:page, "1"))
-    @results =  archivesspace.advanced_search('/search', page, @criteria)
-    if @results['total_hits'].blank? ||  @results['total_hits'] == 0
+    @results = archivesspace.advanced_search('/search', page, @criteria)
+    if @results['total_hits'].blank? || @results['total_hits'] == 0
       raise NoResultsError.new
     else
       process_search_results(@base_search)
     end
   end
 
-  def set_up_advanced_search(default_types = [],default_facets=[],default_search_opts={}, params={})
-    ##Rails.logger.info("beginning")
-    #I18n.t("beginning")
-    
-    params = sanitize_params(params)
-    ##Rails.logger.info("got past sanitize")
-    #I18n.t("got past sanitize")
-   
+  def set_up_advanced_search(default_types = [], default_facets=[], default_search_opts={}, params={})
     @search = Search.new(params)
     unless @search[:limit].blank?
       default_types = @search[:limit].split(",")
     end
-    #Rails.logger.error("past set search statement")
-    #I18n.t('past set search statement')
     set_search_statement
     raise I18n.t('navbar.error_no_term') unless @search.has_query?
-    
-    @facet_filter = FacetFilter.new(default_facets, @search[:filter_fields],  @search[:filter_values])
-    filter_query = @facet_filter.get_filter_query
-    #Rails.logger.error("past filter query")
-    I18n.t('past filter query')
-    queries = @search[:q]
     have_query = false
     advanced_query_builder = AdvancedQueryBuilder.new
     @search[:q].each_with_index { |query, i|
       query.gsub!(/\[\]/x) { |c| "\\" + c }
+      query = '*' if query.blank?
       have_query = true
       op = @search[:op][i]
-      field = @search[:field][i].blank? ? 'keyword_published' :  @search[:field][i]
+      field = @search[:field][i].blank? ? 'keyword' : @search[:field][i]
       from = @search[:from_year][i] || ''
       to = @search[:to_year][i] || ''
       @base_search += '&' if @base_search.last != '?'
@@ -121,7 +100,7 @@ module Searchable
       builder.and(field, query, 'text', false, op == 'NOT')
       # add year range part of the row
       unless from.blank? && to.blank?
-        filter_query.and('years', AdvancedQueryBuilder::RangeValue.new(from, to), 'range', false, op == 'NOT')
+        builder.and('years', AdvancedQueryBuilder::RangeValue.new(from, to), 'range', false, op == 'NOT')
       end
       # add to the builder based on the op
       if op == 'OR'
@@ -130,35 +109,31 @@ module Searchable
         advanced_query_builder.and(builder)
       end
     }
-    #Rails.logger.error("past each with index")
-    I18n.t('past each with index')
     raise I18n.t('navbar.error_no_term') unless have_query  # just in case we missed something
 
-    # any search within results?  Add them to the query string
-    @search[:filter_q].each do |v|
-      unless v.blank?
-        advanced_query_builder.and('keyword_published', v, 'text', false, false)
-      end
-    end
+    filter_query_builder = AdvancedQueryBuilder.new
+
      # we have to add filtered dates, if they exist
     unless @search[:dates_searched]
       years = get_filter_years(params)
       unless years['from_year'].blank? && years['to_year'].blank?
         builder = AdvancedQueryBuilder.new
         builder.and('years', AdvancedQueryBuilder::RangeValue.new(years['from_year'], years['to_year']), 'range', false, false)
-        advanced_query_builder.and(builder)
+        filter_query_builder.and(builder)
         @base_search = "#{@base_search}&filter_from_year=#{years['from_year']}&filter_to_year=#{years['to_year']}"
       end
     end
-
     @criteria = default_search_opts
     @criteria['sort'] = @search[:sort] if @search[:sort]  # sort can be passed as default or via params
     # we have to pass the sort along in the URL
-    @sort =  @criteria['sort']
-
-    # The caller can provide extra filters (in the form of an AdvancedQueryBuilder) to be added in
-    if @criteria['fq']
-      filter_query.and(@criteria['fq'])
+    @sort = @criteria['sort']
+    Rails.logger.debug("SORT: #{@sort}")
+   # if there's an fq passed along...
+    unless @criteria['fq'].blank?
+      @criteria['fq'].each do |fq|
+        f, v = fq.split(":")
+        advanced_query_builder.and(f, v, "text", false, false)
+      end
     end
 
     unless @criteria['repo_id'].blank?
@@ -170,9 +145,11 @@ module Searchable
         .and('repository', repo_uri, 'uri')
         .or('used_within_published_repository', repo_uri, 'uri')
 
-      filter_query.and(this_repo)
+      advanced_query_builder.and(this_repo)
     end
     @base_search += "&limit=#{@search[:limit]}" unless @search[:limit].blank?
+
+    @facet_filter = FacetFilter.new(default_facets, @search[:filter_fields], @search[:filter_values])
 
     # building the query for the facetting
     type_query_builder = AdvancedQueryBuilder.new
@@ -181,17 +158,22 @@ module Searchable
     }
 
     @criteria['aq'] = advanced_query_builder.build.to_json
-    @criteria['filter'] = filter_query.and('types', 'pui').and('publish', true).and(type_query_builder).build.to_json
+    @criteria['filter'] = filter_query_builder.and(@facet_filter.get_filter_query.and(type_query_builder)).build.to_json
+
+   # apply any "search within" clauses
+    @criteria['filter_query[]'] = @search[:filter_q].map {|v|
+      v if !v.to_s.empty?
+    }.compact
+
     @criteria['facet[]'] = @facet_filter.get_facet_types
     @criteria['page_size'] = params.fetch(:page_size, AppConfig[:pui_search_results_page_size])
   end
 
 
   def get_filter_years(params)
-    params = sanitize_params(params)
     years = {}
-    from = params.fetch(:filter_from_year,'').strip
-    to = params.fetch(:filter_to_year,'').strip
+    from = params.fetch(:filter_from_year, '').strip
+    to = params.fetch(:filter_to_year, '').strip
     if !from.blank? || !to.blank?
       years['from_year'] = from.blank? ? '*' : from
       years['to_year'] = to.blank? ? '*' : to
@@ -204,11 +186,11 @@ module Searchable
     hits = Integer(@results['total_hits'])
     if !@results['facets'].blank?
       @results['facets']['facet_fields'].keys.each do |type|
-        facet_hash = strip_facets( @results['facets']['facet_fields'][type],1, hits)
-        if facet_hash.present?
-          @facets[type] = facet_hash
+        facet_group = strip_facets( @results['facets']['facet_fields'][type], 1, type, hits)
+        if facet_group.present?
+          @facets[type] = facet_group
           if type == 'repository'
-            @facets['repository'].delete('global')
+            @facets['repository'].reject! { |f| f.key == 'global' }
           end
         end
       end
@@ -225,10 +207,9 @@ module Searchable
 
     @filters = @facet_filter.get_filter_hash(@page_search)
 
-    @pager = Pager.new(@page_search,@results['this_page'],@results['last_page'])
+    @pager = Pager.new(@page_search, @results['this_page'], @results['last_page'])
     @page_title = I18n.t('search_results.page_title', :count => @results['total_hits'])
   end
-
 
 
 # process search results in one place, including stripping 0-value facets, and JSON-izing any expected JSON
@@ -236,7 +217,7 @@ module Searchable
   #  results['json'}['html'][type]
   def handle_results(results, full = true)
     # FIXME: move facet handling to SolrResults
-    unless  results['facets'].blank? || results['facets']['facet_fields'].blank?
+    unless results['facets'].blank? || results['facets']['facet_fields'].blank?
       results['facets']['facet_fields'] = strip_facet_fields(results['facets']['facet_fields'])
     end
     # FIXME: remove this method as we no longer process results here - Record does the needful
@@ -249,7 +230,6 @@ module Searchable
     results.each do |result|
       if !result['json'].blank?
         result['json'] = ASUtils.json_parse(result['json']) || {}
-#        Pry::ColorPrinter.pp(result['json'])
       end
       result['json']['display_string'] = full_title(result['json'])
       html_notes(result['json'], full)
@@ -257,22 +237,22 @@ module Searchable
       handle_dates( result['json']) if result['json'].has_key?('dates') && full
       handle_external_docs(result['json']) if full
       # the info is deeply nested; find & bring it up
-      if result['_resolved_repository'].kind_of?(Hash)
+      if result['_resolved_repository'].is_a?(Hash)
         rr = result['_resolved_repository'].shift
         if !rr[1][0]['json'].blank?
           result['_resolved_repository']['json'] = ASUtils.json_parse( rr[1][0]['json'])
         end
       end
       # A different kind of convolution
-      if result['_resolved_resource'].kind_of?(Hash)
-        keys  = result['_resolved_resource'].keys
+      if result['_resolved_resource'].is_a?(Hash)
+        keys = result['_resolved_resource'].keys
         if keys
           rr = result['_resolved_resource'][keys[0]]
-          result['_resolved_resource']['json'] =  rr[0]
+          result['_resolved_resource']['json'] = rr[0]
         end
       end
       # and yet another kind of convolution
-      if result['_resolved_top_container_uri_u_sstr'].kind_of?(Hash)
+      if result['_resolved_top_container_uri_u_sstr'].is_a?(Hash)
 #Pry::ColorPrinter.pp result['_resolved_top_container_uri_u_sstr']
         rr = result['_resolved_top_container_uri_u_sstr'].shift
         if !rr[1][0]['json'].blank?
@@ -280,7 +260,7 @@ module Searchable
         end
       end
     end
-   results
+    results
   end
 
 
@@ -288,7 +268,7 @@ module Searchable
   def html_notes(json, full)
     json['html'] = {}
     if json.has_key?('notes')
-      notes_html =  process_json_notes(json['notes'], (!full ? ABSTRACT : nil))
+      notes_html = process_json_notes(json['notes'], (!full ? ABSTRACT : nil))
       notes_html.each do |type, html|
         json['html'][type] = html
       end
@@ -311,7 +291,6 @@ module Searchable
 
 
   def search_terms(params)
-    params = sanitize_params(params)
     terms = ''
     queries = params.fetch(:q, nil)
     if queries
@@ -325,7 +304,7 @@ module Searchable
           terms = query
           unless limit.blank?
             limit_term = limit == 'resource'? 'resources' : 'digital'
-            terms += ' ' + I18n.t('search-limiting', :limit =>  I18n.t("search-limits.#{limit_term}"))
+            terms += ' ' + I18n.t('search-limiting', :limit => I18n.t("search-limits.#{limit_term}"))
           end
         else
           terms += ' ' + ops[i] + ' ' + query
@@ -346,7 +325,7 @@ module Searchable
 
   def default_search_opts(default = {})
     opts = {}
-    default.each do |k,v|
+    default.each do |k, v|
       opts[k] = v
     end
     if AppConfig[:solr_params].any?
@@ -364,8 +343,8 @@ module Searchable
   def repo_context(repo_id, type)
     cont = []
     if repo_id
-      cont.push({:uri => "/repositories/#{repo_id}", :crumb => get_pretty_facet_value('repository', "/repositories/#{repo_id}")})
-      cont.push({:uri => '', :crumb =>  I18n.t("#{type}._plural")})
+      cont.push({:uri => "/repositories/#{repo_id}", :crumb => get_pretty_facet_value('repository', "/repositories/#{repo_id}"), type: 'repository'})
+      cont.push({:uri => '', :crumb => I18n.t("#{type}._plural"), type: type})
     end
   end
 
@@ -377,12 +356,12 @@ module Searchable
 #    Pry::ColorPrinter.pp @search
     l = @search[:limit].blank? ? 'all' : @search[:limit]
     type = "<strong> #{I18n.t("search-limits.#{l}")}</strong>"
-    type += I18n.t('search_results.in_repository', :name =>  CGI::escapeHTML(get_pretty_facet_value('repository', "/repositories/#{rid}"))) if rid
+    type += I18n.t('search_results.in_repository', :name => CGI::escapeHTML(get_pretty_facet_value('repository', "/repositories/#{rid}"))) if rid
 
-    ##Rails.loggerdebug("TYPE: #{type}")
+    Rails.logger.debug("TYPE: #{type}")
     condition = " "
-    @search[:q].each_with_index do |q,i|
-      condition += '<ul>'
+    @search[:q].each_with_index do |q, i|
+      condition += '<li>'
       if i == 0
         if !@search[:op][i].blank?
           condition += I18n.t("search_results.op_first_row.#{@search[:op][i]}", :default => "").downcase
@@ -390,26 +369,26 @@ module Searchable
       else
         condition += I18n.t("search_results.op.#{@search[:op][i]}", :default => "").downcase
       end
-      f = @search[:field][i].blank? ? 'keyword_published' : @search[:field][i]
-      condition += ' ' + I18n.t("search_results.#{f}_contain", :kw =>  CGI::escapeHTML((q == '*' ? I18n.t('search_results.anything') : q)) )
-      unless @search[:from_year][i].blank? &&  @search[:to_year][i].blank?
-         from_year = @search[:from_year][i].blank? ? I18n.t('search_results.filter.year_begin') : @search[:from_year][i]
-         to_year =  @search[:to_year][i].blank? ? I18n.t('search_results.filter.year_now') : @search[:to_year][i]
+      f = @search[:field][i].blank? ? 'keyword' : @search[:field][i]
+      condition += ' ' + I18n.t("search_results.#{f}_contain", :kw => CGI::escapeHTML((q == '*' ? I18n.t('search_results.anything') : q)) )
+      unless @search[:from_year][i].blank? && @search[:to_year][i].blank?
+        from_year = @search[:from_year][i].blank? ? I18n.t('search_results.filter.year_begin') : @search[:from_year][i]
+        to_year = @search[:to_year][i].blank? ? I18n.t('search_results.filter.year_now') : @search[:to_year][i]
         condition += ' ' + I18n.t('search_results.filter.from_to', :begin => "<strong>#{from_year}</strong>", :end => "<strong>#{to_year}</strong>")
       end
-      condition += '</ul>'
-      ##Rails.loggerdebug("Condition: #{condition}")
+      condition += '</li>'
+      Rails.logger.debug("Condition: #{condition}")
     end
     @search[:search_statement] = I18n.t('search_results.search_for', :type => type,
-                                        :conditions => "<li>#{condition}</li>")
+                                        :conditions => "<ul class='no-bullets'>#{condition}</ul>")
   end
 
 
   # if there's an inherited title, pre-pend it
   def full_title(json)
-    ft =  strip_mixed_content(json['display_string'] || json['title'])
+    ft = strip_mixed_content(json['display_string'] || json['title'])
     unless json['title_inherited'].blank? || (json['display_string'] || '') == json['title']
-      ft = I18n.t('inherited', :title => strip_mixed_content(json['title']), :display => ft)
+      ft = I18n.t('inherit.inherited', :level => raw['level'], :title => strip_mixed_content(json['title']), :display => ft)
     end
     ft
   end
@@ -425,25 +404,12 @@ module Searchable
     type
   end
 
-  def sanitize_params(unsanitized)
-    unsanitized.each do | k, v |
-      if v.is_a?(Array)
-        sanitized = []
-        v.each do | val |
-          sanitized << ActionController::Base.helpers.sanitize(val)
-        end
-      elsif v.is_a?(Hash)
-        sanitized = {}
-        v.each do | _key, value |
-          sanitized.merge!(_key: ActionController::Base.helpers.sanitize(value))
-        end
-      elsif v.is_a?(String)
-        sanitized = ActionController::Base.helpers.sanitize(v)
-      elsif v.is_a?(Fixnum)
-        sanitized = v
-      end
-      unsanitized[k.to_sym] = sanitized
+  def repositories_sort_by
+    case AppConfig[:pui_repositories_sort]
+    when :display_string
+      'repo_sort asc'
+    when :position
+      'position_int_sort asc'
     end
-    return unsanitized
   end
 end
