@@ -60,6 +60,26 @@ if (/collection_organization/.test(top.location.pathname))
 
 }
 if (top.location.pathname !== '/')
+
+        $(document).ready(function () {
+           var buttonList = $(".text-right ul.list-inline");
+
+           // Locate the specific <li> elements for each button
+           var askQuestionButton = buttonList.find("a[title='Ask a Question']").closest("li");
+           var aeonRequestButton = buttonList.find("#aeon_request_button").closest("li");
+           var citationButton = buttonList.find("form#cite_sub").closest("li");
+
+           // Ensure the elements exist before proceeding
+           if (askQuestionButton.length && aeonRequestButton.length && citationButton.length) {
+             // Reorder the buttons
+             askQuestionButton.detach().appendTo(buttonList); // Move "Ask a Question" to the end
+             aeonRequestButton.detach().insertBefore(askQuestionButton); // Move "Aeon Request" before "Ask a Question"
+           } else {
+              console.error("Some elements could not be found.");
+           }
+
+        });
+
 	document.addEventListener("DOMContentLoaded", function() {
 		$("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
 
@@ -68,7 +88,12 @@ if (top.location.pathname !== '/')
 		$("#search_label a").css({"cursor": "default", "display": "inline-block !important", "font-family": "Gotham SSm A,Gotham SSm B,Arial,Helvetica,sans-serif !important", "color": "#ffffff !important", "text-decoration": "none !important", "font-weight": "bold !important"});
 
 
-		//$("#search_label, li:has(span)").css({"float": "right"});
+	        $("#search_label").has("a#search_labal_a").css({
+                  "float": "right",
+                });
+
+                $("li:has(a[title='Search The Archives'])").css({"float": "right"});
+
 
 
 
