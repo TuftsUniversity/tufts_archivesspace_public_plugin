@@ -1,8 +1,40 @@
+
 if (top.location.pathname === '/')
-        document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function () {
+    const nav = document.querySelector("nav");
+    if (nav) {
+      const classesToKeep = new Set([
+        "navbar",               // keep structural nav classes
+        "navbar-expand-lg",
+        "nav",
+        "navbar-nav",
+        "navbar-collapse",
+        "navbar-toggler",
+        "nav-item",
+        "nav-link",
+        "collapse",
+        "collapsed",
+        "sr-only",
+        "fa",
+        "fa-search",
+        "container", 
+        "container-fluid"
+      ]);
 
+      // ✅ 1. Whitelist classes on <nav> itself
+      nav.className = Array.from(nav.classList)
+        .filter(cls => classesToKeep.has(cls))
+        .join(" ");
 
-        $("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
+      // ✅ 2. Recursively clean up all child elements
+      nav.querySelectorAll("*").forEach(el => {
+        el.className = Array.from(el.classList)
+          .filter(cls => classesToKeep.has(cls))
+          .join(" ");
+      });
+    }
+
+    $("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
 
 
         if ($("#search_label").length) {
@@ -67,95 +99,133 @@ if (top.location.pathname !== '/')
 
         //$(document).ready(function () {
         document.addEventListener("DOMContentLoaded", function() {
+			
+			// REMOVE CLASSES FROM <nav> AND ITS CHILDREN
+			// REMOVE CLASSES FROM <nav> AND ITS CHILDREN
+			const nav = document.querySelector("nav");
+			if (nav) {
+				const classesToKeep = new Set([
+					"collapse", "collapsed", "container-fluid", "fa", "fa-search",
+					"icon-bar", "nav", "navbar", "navbar-collapse", "navbar-default",
+					"navbar-header", "navbar-nav", "navbar-toggle", "sr-only", "top-bar"
+				]);
 
-           var buttonList = $(".text-right ul.list-inline");
+				const idsToRemove = new Set(["collapsed-menu"]);
 
-           // Locate the specific <li> elements for each button
-           var askQuestionButton = buttonList.find("a[title='Ask a Question']").closest("li");
-           var aeonRequestButton = buttonList.find("#aeon_request_button").closest("li");
-           var citationButton = buttonList.find("form#cite_sub").closest("li");
+				// 🔍 DEBUG
+				console.log("Before cleanup:");
+				console.log("  nav classList →", Array.from(nav.classList));
+				console.log("  nav id →", nav.id);
 
-           // Ensure the elements exist before proceeding
-           if (askQuestionButton.length && aeonRequestButton.length && citationButton.length) {
-             // Reorder the buttons
-             askQuestionButton.detach().appendTo(buttonList); // Move "Ask a Question" to the end
-             aeonRequestButton.detach().insertBefore(askQuestionButton); // Move "Aeon Request" before "Ask a Question"
-           } else {
-              console.error("Some elements could not be found.");
-           }
+				// ✅ 1. CLEAN ROOT <nav> CLASSES
+				nav.className = Array.from(nav.classList)
+					.filter(cls => classesToKeep.has(cls))
+					.join(" ");
 
-  //      });
+				// ✅ 2. REMOVE ROOT <nav> ID IF UNWANTED
+				if (idsToRemove.has(nav.id)) {
+					nav.removeAttribute("id");
+				}
 
-                
-        $("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
+				// ✅ 3. CLEAN CHILDREN
+				nav.querySelectorAll("*").forEach(el => {
+					el.className = Array.from(el.classList)
+						.filter(cls => classesToKeep.has(cls))
+						.join(" ");
 
+					if (idsToRemove.has(el.id)) {
+						el.removeAttribute("id");
+				}
+				}
+			});
+		var buttonList = $(".text-right ul.list-inline");
 
-        if ($("#search_label").length) {
-          $("#search_label").insertAfter($(".navbar-nav li:nth-child(2)"));
-        } else {
-          $("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
+	    // Locate the specific <li> elements for each button
+	    var askQuestionButton = buttonList.find("a[title='Ask a Question']").closest("li");
+	    var aeonRequestButton = buttonList.find("#aeon_request_button").closest("li");
+	    var citationButton = buttonList.find("form#cite_sub").closest("li"); 
 
-        }
-        $("#search_label a").css({"cursor": "default", "display": "inline-block !important", "font-family": "Gotham SSm A,Gotham SSm B,Arial,Helvetica,sans-serif !important", "color": "#ffffff !important", "text-decoration": "none !important", "font-weight": "bold !important"});
+	    // Ensure the elements exist before proceeding 
+	    if (askQuestionButton.length && aeonRequestButton.length && citationButton.length) {
+	 	 // Reorder the buttons
+	    askQuestionButton.detach().appendTo(buttonList); // Move "Ask a Question" to the end
+		aeonRequestButton.detach().insertBefore(askQuestionButton); // Move "Aeon Request" before "Ask a Question"
+	    } else {
+		   console.error("Some elements could not be found.");
+	    }
 
+//      });
 
-
-        //$("#search_label, li:has(span)").css({"float": "right"});
-                //$("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
-
-
-                //if ($("#search_label").length) {
-                //  $("#search_label").insertAfter($(".navbar-nav li:nth-child(2)"));
-                //} else {
-                //  $("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(n)"));
-                //}
-
-
-                //$("#search_label a").css({"cursor": "default", "display": "inline-block !important", "font-family": "Gotham SSm A,Gotham SSm B,Arial,Helvetica,sans-serif !important", "color": "#ffffff !important", "text-decoration": "none !important", "font-weight": "bold !important"});
-
-
-                $("#search_label").has("a#search_labal_a").css({
-                  "float": "right",
-                });
-
-                $("li:has(a[title='Search The Archives'])").css({"float": "right"});
-
-
-
-
-                $("#search_label a").hover(function() {
-                        $("#search_label a").css("pointer-events", "none")
-                });
-
-
-                $(".agents_list").wrap("<div></div>");
-                $(".agents_list li").contents().unwrap();
-                $(".agents_list").contents().wrap("<div id='agents-div'></div>");
-                $(".agents_list").contents().unwrap();
-                //$("#agents-content").wrap("<p id='agents-content-par'></p>");
-                //$("#agents-content-par").unwrap().wrap("<div id='agents-div'></div>);
-
-                
-                $(".navbar-nav").css({"width": "100%"})
-
-                $(".navbar-nav li:nth-child(4)").css({"float": "right"})
-
-                $("<li><a href='https://archives.tufts.edu'>Home</a>").insertBefore($(".navbar-nav li:nth-child(1)"));
+			
+		$("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
 
 
-                // run test on initial page load
-                checkSize();
-                $(window).resize(checkSize);
-                // run test on resize of the window
-                        function checkSize(){
-                        if ($(".navbar-nav li:nth-child(2)").css("padding-right") == "2px"){
+		if ($("#search_label").length) {
+			$("#search_label").insertAfter($(".navbar-nav li:nth-child(2)"));
+		} else {
+			$("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
 
-                                // do something here
-                                $(".navbar-nav li:nth-child(2)").css({"padding-right": "2px"});
+		}
+		$("#search_label a").css({"cursor": "default", "display": "inline-block !important", "font-family": "Gotham SSm A,Gotham SSm B,Arial,Helvetica,sans-serif !important", "color": "#ffffff !important", "text-decoration": "none !important", "font-weight": "bold !important"});
 
 
-                        }
-                }
+
+	//$("#search_label, li:has(span)").css({"float": "right"});
+			//$("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
+
+
+			//if ($("#search_label").length) {
+			//  $("#search_label").insertAfter($(".navbar-nav li:nth-child(2)"));
+			//} else {
+			//  $("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(n)"));
+			//}
+
+
+			//$("#search_label a").css({"cursor": "default", "display": "inline-block !important", "font-family": "Gotham SSm A,Gotham SSm B,Arial,Helvetica,sans-serif !important", "color": "#ffffff !important", "text-decoration": "none !important", "font-weight": "bold !important"});
+
+
+			$("#search_label").has("a#search_labal_a").css({
+			  "float": "right",
+			});
+
+			$("li:has(a[title='Search The Archives'])").css({"float": "right"});
+
+
+
+
+			$("#search_label a").hover(function() {
+					$("#search_label a").css("pointer-events", "none")
+			});
+
+
+			$(".agents_list").wrap("<div></div>");
+			$(".agents_list li").contents().unwrap();
+			$(".agents_list").contents().wrap("<div id='agents-div'></div>");
+			$(".agents_list").contents().unwrap();
+			//$("#agents-content").wrap("<p id='agents-content-par'></p>");
+			//$("#agents-content-par").unwrap().wrap("<div id='agents-div'></div>);
+
+			
+			$(".navbar-nav").css({"width": "100%"})
+
+			$(".navbar-nav li:nth-child(4)").css({"float": "right"})
+
+			$("<li><a href='https://archives.tufts.edu'>Home</a>").insertBefore($(".navbar-nav li:nth-child(1)"));
+
+
+			// run test on initial page load
+			checkSize();
+			$(window).resize(checkSize);
+			// run test on resize of the window
+					function checkSize(){
+					if ($(".navbar-nav li:nth-child(2)").css("padding-right") == "2px"){
+
+							// do something here
+							$(".navbar-nav li:nth-child(2)").css({"padding-right": "2px"});
+
+
+					}
+			}
 
 
         });
