@@ -205,8 +205,8 @@
   }
   
   */
-  .navbar-nav > li:nth-child(1){padding-right:2px; float:left} 
-  .navbar-nav > li {display: inline-block;}
+/*  .navbar-nav > li:nth-child(1){padding-right:2px; float:left} 
+  .navbar-nav > li {display: inline-block;}*/
   @media screen and (max-width: 1100px) {
 	  
    .navbar-nav li:nth-child(3){padding-right:2px} 
@@ -399,19 +399,20 @@
     */
   ul.navbar-nav > li > a,
   ul.navbar-nav > li > a:hover, 
-  ul.navbar-nav > span > li > a {
-    font-family:"Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;
+  ul.navbar-nav > span > li > a,
+  ul.navbar-nav > div > li > a {
+    /*font-family:"Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;*/
     color: #ffffff !important;
     text-decoration: none !important;
-	font-weight: 500;
+	/*font-weight: 500;
 	
-	font-size: 15px;
+	font-size: 15px;*/
   }
 
-  ul.navbar-nav > li > a:hover {
+/*  ul.navbar-nav > li > a:hover {
     color: #63aaff !important;
     transition-duration: 0.3s;
-  }
+  }*/
 
   h1 {
     font-family:"Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;

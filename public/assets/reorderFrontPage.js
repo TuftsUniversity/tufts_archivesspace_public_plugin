@@ -1,75 +1,87 @@
 
-if (top.location.pathname === '/')
+if (top.location.pathname === '/'){
   document.addEventListener("DOMContentLoaded", function () {
-    const nav = document.querySelector("nav");
-    if (nav) {
-      const classesToKeep = new Set([
-        "navbar",               // keep structural nav classes
-        "navbar-expand-lg",
-        "nav",
-        "navbar-nav",
-        "navbar-collapse",
-        "navbar-toggler",
-        "nav-item",
-        "nav-link",
-        "collapse",
-        "collapsed",
-        "sr-only",
-        "fa",
-        "fa-search",
-        "container", 
-        "container-fluid"
-      ]);
 
-      // ✅ 1. Whitelist classes on <nav> itself
-      nav.className = Array.from(nav.classList)
-        .filter(cls => classesToKeep.has(cls))
-        .join(" ");
+		$("ul.navbar-nav").css({"width": "100%"})
+		$("<li id='search-label-for-js' class='nav-item p-2'><a class='nav-link'>Search:</a></li>").insertAfter($(".navbar li:nth-child(2)"));
 
-      // ✅ 2. Recursively clean up all child elements
-      nav.querySelectorAll("*").forEach(el => {
-        el.className = Array.from(el.classList)
-          .filter(cls => classesToKeep.has(cls))
-          .join(" ");
-      });
-    }
+		
+		// Insert the "Search:" label after the 2nd navbar item, if not already present
+		if (!$("#search-label-for-js").length) {
+		  $("<li id='search-label-for-js' class='nav-item p-2'><a class='nav-link'>Search:</a></li>")
+			.insertAfter($(".navbar li:nth-child(2)"));
+		}
 
-    $("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
-
-
-        if ($("#search_label").length) {
-          $("#search_label").insertAfter($(".navbar-nav li:nth-child(2)"));
-        } else {
-          $("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
-        }
-        $("#search_label a").css({"cursor": "default", "display": "inline-block !important", "font-family": "Gotham SSm A,Gotham SSm B,Arial,Helvetica,sans-serif !important", "color": "#ffffff !important", "text-decoration": "none !important", "font-weight": "bold !important"});
-
-
-        $("#search_label, li:has(span)").css({"float": "right"});
+		
+		// Float both to the right
+		$("#search-label-for-js, li:has(a[title='Search The Archives'])").css("float", "right");
 
         
 
-        $("#search_label a").hover(function() {
-                $("#search_label a").css("pointer-events", "none")
+        $("#search-label-for-js a").hover(function() {
+                $("#search-label-for-js a").css("pointer-events", "none")
         });
 
+		$(".navbar li:nth-child(4)").css({"float": "right"})
+
+        $("<li class='nav-item p-2'><a class='nav-link' href='https://archives.tufts.edu'>Home</a>").insertBefore($(".navbar li:nth-child(1)"));
 
 
-        $(".navbar-nav").css({"width": "100%"})
+				// Set each <li> to behave like flex items
+		$(".navbar-nav > li").css({
+		  "display": "inline-flex",
+		  "align-items": "center"
+		});
 
-        $(".navbar-nav li:nth-child(4)").css({"float": "right"})
 
-        $("<li><a href='https://archives.tufts.edu'>Home</a>").insertBefore($(".navbar-nav li:nth-child(1)"));
+		// Push the "Search The Archives" link and label all the way to the right
+		// Move both the label and the "Search The Archives" link to the right
+		const searchLinkItem = $("li:has(a[title='Search The Archives'])");
 
+		// Ensure "Search:" label appears immediately to the left of "Search The Archives"
+		$("#search-label-for-js").insertBefore(searchLinkItem);
+
+		const searchLabel = $("#search-label-for-js");
+
+		searchLabel.insertBefore(searchLinkItem);
+
+/* 		// Use a wrapper to push them
+		$("<div class='search-right-group'></div>")
+		  .css({
+			"margin-left": "auto",
+			"display": "flex"
+		  })
+		  .append(searchLabel)
+		  .append(searchLinkItem)
+		  .appendTo($(".navbar-nav"));
+		   */
+		  
+		//
+		const wrapperLi = $("<li class='nav-item search-right-group'></li>")
+			.css({
+			"margin-left": "auto",
+			"display": "flex",
+			"align-items": "center",
+			"gap": "8px" // optional spacing
+			})
+			.append(searchLabel)
+			.append(searchLinkItem);
+
+		// Append the new wrapper <li> to the navbar
+		$(".navbar-nav").append(wrapperLi);
+
+
+
+       //
         // run test on initial page load
         checkSize();
         $(window).resize(checkSize);
         // run test on resize of the window
                 function checkSize(){
-                if ($(".navbar-nav li:nth-child(2)").css("padding-right") == "2px"){
+                if ($(".navbar li:nth-child(2)").css("padding-right") == "2px"){
 
                         // do something here
-                        $(".navbar-nav li:nth-child(2)").css({"padding-right": "2px"});
+                        $(".navbar li:nth-child(2)").css({"padding-right": "2px"});
 
 
                 }
@@ -80,11 +92,30 @@ if (top.location.pathname === '/')
         $("<br /><br />").appendTo($("h2"));
         $("#content .search").insertAfter($("h2"));
         $('.search').not(':last').remove()
+		
+				  // Step 1: Find all .col-sm-12 sections in #content
+		const sections = document.querySelectorAll("#content .col-sm-12");
 
+		for (const section of sections) {
+		if (!section.querySelector("hr")) continue; // Skip if it doesn't contain <hr>
 
+		const innerDivs = section.querySelectorAll(":scope > div");
+		for (const div of innerDivs) {
+		  const cols = div.querySelectorAll(":scope > .col-sm-6");
+		  if (cols.length === 2) {
+			const row = document.createElement("div");
+			row.className = "row";
+			row.appendChild(cols[0]);
+			row.appendChild(cols[1]);
+			div.insertBefore(row, cols[1].nextSibling);
+			break; // only do this once
+		  }
+		}
+		}
+	});
 
+}
 
-});
 
 
 if (/collection_organization/.test(top.location.pathname))
@@ -100,44 +131,8 @@ if (top.location.pathname !== '/')
         //$(document).ready(function () {
         document.addEventListener("DOMContentLoaded", function() {
 			
-			// REMOVE CLASSES FROM <nav> AND ITS CHILDREN
-			// REMOVE CLASSES FROM <nav> AND ITS CHILDREN
-			const nav = document.querySelector("nav");
-			if (nav) {
-				const classesToKeep = new Set([
-					"collapse", "collapsed", "container-fluid", "fa", "fa-search",
-					"icon-bar", "nav", "navbar", "navbar-collapse", "navbar-default",
-					"navbar-header", "navbar-nav", "navbar-toggle", "sr-only", "top-bar"
-				]);
+	
 
-				const idsToRemove = new Set(["collapsed-menu"]);
-
-				// 🔍 DEBUG
-				console.log("Before cleanup:");
-				console.log("  nav classList →", Array.from(nav.classList));
-				console.log("  nav id →", nav.id);
-
-				// ✅ 1. CLEAN ROOT <nav> CLASSES
-				nav.className = Array.from(nav.classList)
-					.filter(cls => classesToKeep.has(cls))
-					.join(" ");
-
-				// ✅ 2. REMOVE ROOT <nav> ID IF UNWANTED
-				if (idsToRemove.has(nav.id)) {
-					nav.removeAttribute("id");
-				}
-
-				// ✅ 3. CLEAN CHILDREN
-				nav.querySelectorAll("*").forEach(el => {
-					el.className = Array.from(el.classList)
-						.filter(cls => classesToKeep.has(cls))
-						.join(" ");
-
-					if (idsToRemove.has(el.id)) {
-						el.removeAttribute("id");
-				}
-				}
-			});
 		var buttonList = $(".text-right ul.list-inline");
 
 	    // Locate the specific <li> elements for each button
@@ -156,46 +151,61 @@ if (top.location.pathname !== '/')
 
 //      });
 
-			
-		$("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
+		$("ul.navbar-nav").css({"width": "100%"})
+		$("<li id='search-label-for-js' class='nav-item p-2'><a class='nav-link'>Search:</a></li>").insertAfter($(".navbar li:nth-child(2)"));
 
-
-		if ($("#search_label").length) {
-			$("#search_label").insertAfter($(".navbar-nav li:nth-child(2)"));
-		} else {
-			$("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
-
+		
+		// Insert the "Search:" label after the 2nd navbar item, if not already present
+		if (!$("#search-label-for-js").length) {
+		  $("<li id='search-label-for-js' class='nav-item p-2'><a class='nav-link'>Search:</a></li>")
+			.insertAfter($(".navbar li:nth-child(2)"));
 		}
-		$("#search_label a").css({"cursor": "default", "display": "inline-block !important", "font-family": "Gotham SSm A,Gotham SSm B,Arial,Helvetica,sans-serif !important", "color": "#ffffff !important", "text-decoration": "none !important", "font-weight": "bold !important"});
+
+		// Move both the label and the "Search The Archives" link to the right
+		const searchLinkItem = $("li:has(a[title='Search The Archives'])");
+	
+
+		// Ensure "Search:" label appears immediately to the left of "Search The Archives"
+		$("#search-label-for-js").insertBefore(searchLinkItem);
+
+		const searchLabel = $("#search-label-for-js");
+		// Ensure "Search:" label appears immediately to the left of "Search The Archives"
+		$("#search-label-for-js").insertBefore(searchLinkItem);
+
+		// Float both to the right
+		$("#search-label-for-js, li:has(a[title='Search The Archives'])").css("float", "right");
+
+        
+
+        $("#search-label-for-js a").hover(function() {
+                $("#search-label-for-js a").css("pointer-events", "none")
+        });
+
+		$(".navbar li:nth-child(4)").css({"float": "right"})
+
+        $("<li class='nav-item p-2'><a class='nav-link' href='https://archives.tufts.edu'>Home</a>").insertBefore($(".navbar li:nth-child(1)"));
+
+
+				// Set each <li> to behave like flex items
+		$(".navbar-nav > li").css({
+		  "display": "inline-flex",
+		  "align-items": "center"
+		});
 
 
 
-	//$("#search_label, li:has(span)").css({"float": "right"});
-			//$("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(2)"));
 
+		searchLabel.insertBefore(searchLinkItem);
 
-			//if ($("#search_label").length) {
-			//  $("#search_label").insertAfter($(".navbar-nav li:nth-child(2)"));
-			//} else {
-			//  $("<li id='search_label'><a id='search_labal_a'>Search:</a></li>").insertAfter($(".navbar-nav li:nth-child(n)"));
-			//}
-
-
-			//$("#search_label a").css({"cursor": "default", "display": "inline-block !important", "font-family": "Gotham SSm A,Gotham SSm B,Arial,Helvetica,sans-serif !important", "color": "#ffffff !important", "text-decoration": "none !important", "font-weight": "bold !important"});
-
-
-			$("#search_label").has("a#search_labal_a").css({
-			  "float": "right",
-			});
-
-			$("li:has(a[title='Search The Archives'])").css({"float": "right"});
-
-
-
-
-			$("#search_label a").hover(function() {
-					$("#search_label a").css("pointer-events", "none")
-			});
+		// Use a wrapper to push them
+		$("<div class='search-right-group'></div>")
+		  .css({
+			"margin-left": "auto",
+			"display": "flex"
+		  })
+		  .append(searchLabel)
+		  .append(searchLinkItem)
+		  .appendTo($(".navbar-nav"));
 
 
 			$(".agents_list").wrap("<div></div>");
@@ -206,11 +216,11 @@ if (top.location.pathname !== '/')
 			//$("#agents-content-par").unwrap().wrap("<div id='agents-div'></div>);
 
 			
-			$(".navbar-nav").css({"width": "100%"})
+			$(".navbar").css({"width": "100%"})
 
-			$(".navbar-nav li:nth-child(4)").css({"float": "right"})
+			$(".navbar li:nth-child(4)").css({"float": "right"})
 
-			$("<li><a href='https://archives.tufts.edu'>Home</a>").insertBefore($(".navbar-nav li:nth-child(1)"));
+			$("<li><a href='https://archives.tufts.edu'>Home</a>").insertBefore($(".navbar li:nth-child(1)"));
 
 
 			// run test on initial page load
@@ -218,16 +228,16 @@ if (top.location.pathname !== '/')
 			$(window).resize(checkSize);
 			// run test on resize of the window
 					function checkSize(){
-					if ($(".navbar-nav li:nth-child(2)").css("padding-right") == "2px"){
+					if ($(".navbar li:nth-child(2)").css("padding-right") == "2px"){
 
 							// do something here
-							$(".navbar-nav li:nth-child(2)").css({"padding-right": "2px"});
+							$(".navbar li:nth-child(2)").css({"padding-right": "2px"});
 
 
 					}
 			}
 
-
+	
         });
 
 /*
