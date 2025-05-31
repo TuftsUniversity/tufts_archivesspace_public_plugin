@@ -151,61 +151,53 @@ if (top.location.pathname !== '/')
 
 //      });
 
-		$("ul.navbar-nav").css({"width": "100%"})
-		$("<li id='search-label-for-js' class='nav-item p-2'><a class='nav-link'>Search:</a></li>").insertAfter($(".navbar li:nth-child(2)"));
+		const mainNavbar = $("#navigation .navbar-nav");
 
-		
-		// Insert the "Search:" label after the 2nd navbar item, if not already present
+		mainNavbar.css({ "width": "100%" });
+
+		// Add the Search label if not already present
 		if (!$("#search-label-for-js").length) {
 		  $("<li id='search-label-for-js' class='nav-item p-2'><a class='nav-link'>Search:</a></li>")
-			.insertAfter($(".navbar li:nth-child(2)"));
+			.insertAfter(mainNavbar.find("li:nth-child(2)"));
 		}
 
-		// Move both the label and the "Search The Archives" link to the right
-		const searchLinkItem = $("li:has(a[title='Search The Archives'])");
-	
-
-		// Ensure "Search:" label appears immediately to the left of "Search The Archives"
-		$("#search-label-for-js").insertBefore(searchLinkItem);
-
+		// Move search label and link to the right
 		const searchLabel = $("#search-label-for-js");
-		// Ensure "Search:" label appears immediately to the left of "Search The Archives"
-		$("#search-label-for-js").insertBefore(searchLinkItem);
-
-		// Float both to the right
-		$("#search-label-for-js, li:has(a[title='Search The Archives'])").css("float", "right");
-
-        
-
-        $("#search-label-for-js a").hover(function() {
-                $("#search-label-for-js a").css("pointer-events", "none")
-        });
-
-		$(".navbar li:nth-child(4)").css({"float": "right"})
-
-        $("<li class='nav-item p-2'><a class='nav-link' href='https://archives.tufts.edu'>Home</a>").insertBefore($(".navbar li:nth-child(1)"));
-
-
-				// Set each <li> to behave like flex items
-		$(".navbar-nav > li").css({
-		  "display": "inline-flex",
-		  "align-items": "center"
-		});
-
-
-
+		const searchLinkItem = mainNavbar.find("li:has(a[title='Search The Archives'])");
 
 		searchLabel.insertBefore(searchLinkItem);
 
-		// Use a wrapper to push them
-		$("<div class='search-right-group'></div>")
-		  .css({
+		// Float them right
+		searchLabel.add(searchLinkItem).css("float", "right");
+
+		// Prevent link action on hover
+		searchLabel.find("a").hover(function () {
+		  $(this).css("pointer-events", "none");
+		});
+
+		// Add Home link if not already there
+		if (!mainNavbar.find("a[href='https://archives.tufts.edu']").length) {
+		  $("<li class='nav-item p-2'><a class='nav-link' href='https://archives.tufts.edu'>Home</a></li>")
+			.insertBefore(mainNavbar.find("li:first-child"));
+		}
+
+		const wrapperLi = $("<li class='nav-item search-right-group'></li>")
+			.css({
 			"margin-left": "auto",
-			"display": "flex"
-		  })
-		  .append(searchLabel)
-		  .append(searchLinkItem)
-		  .appendTo($(".navbar-nav"));
+			"display": "flex",
+			"align-items": "center",
+			"gap": "8px" // optional spacing
+			})
+			.append(searchLabel)
+			.append(searchLinkItem);
+
+		// Append the new wrapper <li> to the navbar
+		$(".navbar-nav").append(wrapperLi);
+		// Set flex layout for li items in top nav only
+		mainNavbar.children("li").css({
+		  "display": "inline-flex",
+		  "align-items": "center"
+		});
 
 
 			$(".agents_list").wrap("<div></div>");
@@ -220,8 +212,7 @@ if (top.location.pathname !== '/')
 
 			$(".navbar li:nth-child(4)").css({"float": "right"})
 
-			$("<li><a href='https://archives.tufts.edu'>Home</a>").insertBefore($(".navbar li:nth-child(1)"));
-
+			
 
 			// run test on initial page load
 			checkSize();
