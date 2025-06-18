@@ -197,7 +197,7 @@
   #search_label > a:hover {
 	  cursor: default; 
 	  display: inline-block !important;
-	  font-family: "Gotham SSm A,Gotham SSm B,Arial,Helvetica,sans-serif !important";
+	  font-family: "Proxima Nova,Proxima Nova,Arial,Helvetica,sans-serif !important";
 	  color: #ffffff !important; 
 	  text-decoration: none !important; 
 	  font-weight: 500 !important;
@@ -265,7 +265,11 @@
 
 /* From dca.tufts.edu footer styles*/
 
-.bottom-bar{font-family:"Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;background-color:#333;color:#ffffff;padding-top:2em;padding-bottom:4em}
+.bottom-bar, h1, h2, h3, h4, h2.smaller_gray, span.inline-label, .btn-dark, .record-type-badge, strong, span.bold, .identifier span.id-label, .component, .acc_button { font-family: proxima-nova,Arial,Helvetica,sans-serif;}
+
+.infinite-record-record { padding-bottom: 0;}
+
+div.information a.btn { border: 1px solid #ccc; }
 .bottom-bar a,.bottom-bar a:visited,.bottom-bar a:hover,.bottom-bar a:focus{color:#fefefe;font-size:0.84em;}
 .bottom-bar {}
 @media print,screen and (min-width:10em){.bottom-bar {padding-bottom:2em}
@@ -402,7 +406,7 @@
   ul.navbar-nav > span > li > a,
   ul.navbar-nav > div > li > a,
   ul.navbar-nav > li > li > a  {
-    /*font-family:"Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;*/
+    /*font-family:"Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;*/
     color: #ffffff !important;
     text-decoration: none !important;
 	/*font-weight: 500;
@@ -416,27 +420,27 @@
   }*/
 
   h1 {
-    font-family:"Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;
+    font-family:"Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
     color: #555;
     font-size: 1.75em;
     font-weight: 500;
   }
 
   h2 {
-    font-family:"Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;
+    font-family:"Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
     font-weight: 500;
     font-size: 1.5em;
     color: #00356b;
   }
 
   h3 {
-    font-family:"Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;
+    font-family:"Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
     font-weight: 500;
     color: #00356b;
   }
 
   h4, h2.smaller_gray {
-    font-family:"Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;
+    font-family:"Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
     font-weight: 500;
     color: inherit;
     font-size: 1.2em;
@@ -444,13 +448,13 @@
 
 
   span.inline-label {
-    font-family:"Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;
+    font-family:"Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
   }
 
   .btn-dark {
     background-color: #00356b;
     font-size: 1.2em;
-    font-family: "Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;
+    font-family: "Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
   }
 
   div.profile {
@@ -565,7 +569,7 @@
   }
 
   .record-type-badge {
-    font-family: "Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;
+    font-family: "Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
     font-weight: 500;
    /* white-space: pre-wrap; */
   }
@@ -743,7 +747,7 @@
 
   /*mdc: temp fix for font override */
   .record-type-badge {
-    font-family: "Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;
+    font-family: "Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
   }
 
   /*mdc: i just can't stand those rounded pills no more */
@@ -1036,15 +1040,6 @@
   /* Modify search result description blocks:
   * - Drop Call Number to its own line (this also aligns the icon)
   */
-  .badge-and-identifier .record-type-badge {
-    float: none;
-    padding: 0px;
-  }
-  .identifier {
-    float: none;
-    margin-left: 0px !important;
-    padding: 1em 0 0 0 !important;
-  }
 
   /* - Insert 1em padding on top of all description sections.
   */
@@ -1061,7 +1056,7 @@
   span.bold,
   .identifier span.id-label,
   .component {
-    font-family: "Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;
+    font-family: "Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
     font-weight: normal;
   }
 
@@ -1100,7 +1095,7 @@
   * Button and accordion alignment
   */
   .acc_button {
-  font-family: "Gotham SSm A","Gotham SSm B",Arial,Helvetica,sans-serif;
+  font-family: "Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
   font-weight: 500;
   margin-bottom: 0.5em;
   padding-left: 15px;
