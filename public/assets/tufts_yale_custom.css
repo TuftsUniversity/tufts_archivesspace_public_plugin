@@ -197,7 +197,7 @@
   #search_label > a:hover {
 	  cursor: default; 
 	  display: inline-block !important;
-	  font-family: "Proxima Nova,Proxima Nova,Arial,Helvetica,sans-serif !important";
+	  font-family: "proxima-nova,proxima-nova,Arial,Helvetica,sans-serif !important";
 	  color: #ffffff !important; 
 	  text-decoration: none !important; 
 	  font-weight: 500 !important;
@@ -265,7 +265,6 @@
 
 /* From dca.tufts.edu footer styles*/
 
-.bottom-bar, h1, h2, h3, h4, h2.smaller_gray, span.inline-label, .btn-dark, .record-type-badge, strong, span.bold, .identifier span.id-label, .component, .acc_button { font-family: proxima-nova,Arial,Helvetica,sans-serif;}
 
 .infinite-record-record { padding-bottom: 0;}
 .bottom-bar, h1, h2, h3, h4, h2.smaller_gray, span.inline-label, .btn-dark, .record-type-badge, strong, span.bold, .identifier span.id-label, .component, .acc_button { font-family: proxima-nova,Arial,Helvetica,sans-serif;}
@@ -430,7 +429,7 @@ div.information a.btn { border: 1px solid #ccc; }
   ul.navbar-nav > span > li > a,
   ul.navbar-nav > div > li > a,
   ul.navbar-nav > li > li > a  {
-    /*font-family:"Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;*/
+    /*font-family:"proxima-nova","proxima-nova",Arial,Helvetica,sans-serif;*/
     color: #ffffff !important;
     text-decoration: none !important;
 	/*font-weight: 500;
@@ -444,27 +443,27 @@ div.information a.btn { border: 1px solid #ccc; }
   }*/
 
   h1 {
-    font-family:"Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
+    font-family:"proxima-nova","proxima-nova",Arial,Helvetica,sans-serif;
     color: #555;
     font-size: 1.75em;
     font-weight: 500;
   }
 
   h2 {
-    font-family:"Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
+    font-family:"proxima-nova","proxima-nova",Arial,Helvetica,sans-serif;
     font-weight: 500;
     font-size: 1.5em;
     color: #00356b;
   }
 
   h3 {
-    font-family:"Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
+    font-family:"proxima-nova","proxima-nova",Arial,Helvetica,sans-serif;
     font-weight: 500;
     color: #00356b;
   }
 
   h4, h2.smaller_gray {
-    font-family:"Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
+    font-family:"proxima-nova","proxima-nova",Arial,Helvetica,sans-serif;
     font-weight: 500;
     color: inherit;
     font-size: 1.2em;
@@ -472,13 +471,13 @@ div.information a.btn { border: 1px solid #ccc; }
 
 
   span.inline-label {
-    font-family:"Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
+    font-family:"proxima-nova","proxima-nova",Arial,Helvetica,sans-serif;
   }
 
   .btn-dark {
     background-color: #00356b;
     font-size: 1.2em;
-    font-family: "Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
+    font-family: "proxima-nova","proxima-nova",Arial,Helvetica,sans-serif;
   }
 
   div.profile {
@@ -593,7 +592,7 @@ div.information a.btn { border: 1px solid #ccc; }
   }
 
   .record-type-badge {
-    font-family: "Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
+    font-family: "proxima-nova","proxima-nova",Arial,Helvetica,sans-serif;
     font-weight: 500;
    /* white-space: pre-wrap; */
   }
@@ -771,7 +770,7 @@ div.information a.btn { border: 1px solid #ccc; }
 
   /*mdc: temp fix for font override */
   .record-type-badge {
-    font-family: "Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
+    font-family: "proxima-nova","proxima-nova",Arial,Helvetica,sans-serif;
   }
 
   /*mdc: i just can't stand those rounded pills no more */
@@ -877,19 +876,19 @@ div.information a.btn { border: 1px solid #ccc; }
 
   /* Added by HLS from Tufts to tighten display and 
      and make it apparent which notes go with which object */
-  .infinite-record-record {
+/*  .infinite-record-record {
     padding-bottom: 10px;
-  }
+  }*/
 
   .dl-horizontal scroll-view-notes {
     padding-bottom: 10px;
   }
  
-  .infinite-record-record > div  {
+  /* .infinite-record-record > div  {*/
    /* line-height: .4;*/
-    padding-left: .25rem;
+/*    padding-left: .25rem;
     padding-bottom: 0px;
-  }
+  }*/
 
   
   /* mdc: just because the default gray background is bothering me */
@@ -1080,7 +1079,7 @@ div.information a.btn { border: 1px solid #ccc; }
   span.bold,
   .identifier span.id-label,
   .component {
-    font-family: "Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
+    font-family: "proxima-nova","proxima-nova",Arial,Helvetica,sans-serif;
     font-weight: normal;
   }
 
@@ -1119,7 +1118,7 @@ div.information a.btn { border: 1px solid #ccc; }
   * Button and accordion alignment
   */
   .acc_button {
-  font-family: "Proxima Nova","Proxima Nova",Arial,Helvetica,sans-serif;
+  font-family: "proxima-nova","proxima-nova",Arial,Helvetica,sans-serif;
   font-weight: 500;
   margin-bottom: 0.5em;
   padding-left: 15px;
