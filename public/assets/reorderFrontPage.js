@@ -120,8 +120,25 @@ if (top.location.pathname === '/'){
 
 if (/collection_organization/.test(top.location.pathname))
 {
- document.addEventListener("DOMContentLoaded", function() {
+$(document).ready(function () { 
      $("#record-number-0").remove();
+
+     // Wait and retry every 200ms until it's found
+     const interval = setInterval(function () {
+     const $rows = $('.information.row');
+     if ($rows.length > 0) {
+       console.log("Found dynamically loaded rows");
+       $rows.each(function () {
+         const $h3 = $(this).find('h3.col-sm-9');
+         const $requestButton = $(this).find('.col-sm-3');
+         if ($h3.length && $requestButton.length) {
+           $requestButton.insertAfter($h3);
+         }
+       });
+       clearInterval(interval); // Stop polling
+     }
+     }, 200);
+
 });
 
 

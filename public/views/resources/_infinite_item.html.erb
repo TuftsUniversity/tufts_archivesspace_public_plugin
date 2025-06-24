@@ -29,14 +29,14 @@
     } %>
   <% end %>
   <% if indent_level > 1 %>
-  <dl class="administrative-notes row">
+  <dl class="administrative_notes row">
 
   <% else %>
-  <dl class="administrative-notes">
+  <dl class="administrative_notes">
   <% end %>
     <% accessrestrict_note = @result.note('accessrestrict') %>
     <% if accessrestrict_note && !accessrestrict_note['note_text'].blank? && !inherited?(accessrestrict_note) && @result.is_a?(Resource) %>
-                <div>
+		<div>
         <dt><%= accessrestrict_note['label'] %></dt>
         <dd>
           <%= render partial: 'shared/single_note', locals: {
@@ -49,11 +49,12 @@
       </div>
     <% end %>
 
-        <% if accessrestrict_note && !accessrestrict_note['note_text'].blank? && !inherited?(accessrestrict_note) && @result.is_a?(ArchivalObject) %>
+	<% if accessrestrict_note && !accessrestrict_note['note_text'].blank? && !inherited?(accessrestrict_note) && @result.is_a?(ArchivalObject) %>
         <div style="display: grid;">
         <dt>Access</dt>
         <dd>
-          <%= accessrestrict_note['note_text'] %>
+          <%= accessrestrict_note['note_text'].gsub(/<\/?[^>]+>/, '') %>
+
         </dd>
       </div>
     <% end %>

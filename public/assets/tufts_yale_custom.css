@@ -268,7 +268,31 @@
 .bottom-bar, h1, h2, h3, h4, h2.smaller_gray, span.inline-label, .btn-dark, .record-type-badge, strong, span.bold, .identifier span.id-label, .component, .acc_button { font-family: proxima-nova,Arial,Helvetica,sans-serif;}
 
 .infinite-record-record { padding-bottom: 0;}
+.bottom-bar, h1, h2, h3, h4, h2.smaller_gray, span.inline-label, .btn-dark, .record-type-badge, strong, span.bold, .identifier span.id-label, .component, .acc_button { font-family: proxima-nova,Arial,Helvetica,sans-serif;}
 
+.infinite-record-record { padding-bottom: 0;}
+
+div.information a.btn { border: 1px solid #ccc; }
+
+.infinite-item dl.administrative_notes > div {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding-right: 1rem;
+    padding-left: 0;
+    display: grid;
+    grid-template-columns: 25% 75%;
+    column-gap: 1rem;
+    }
+
+.administrative_notes dd p:last-child {
+    margin-bottom: 0;
+}
+
+.btn-default:hover {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+}
 div.information a.btn { border: 1px solid #ccc; }
 .bottom-bar a,.bottom-bar a:visited,.bottom-bar a:hover,.bottom-bar a:focus{color:#fefefe;font-size:0.84em;}
 .bottom-bar {}
