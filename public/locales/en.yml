@@ -21,52 +21,50 @@
 
 en:
   brand:
-    title: Archives at Tufts
-    title_link_text: Return to the Archives at Tufts
-    welcome_head: Welcome to Archives at Tufts
+    title: ArchivesSpace Public Interface
+    title_link_text: Return to the ArchivesSpace homepage
+    home: Home
+    welcome_head: Welcome to ArchivesSpace
     welcome_message: |
-        <hr/>
-        <div class="col-sm-6">
-          <h3>About this Site</h3>
-          <p>Archives at Tufts contains all finding aids for Tufts Archival Research Center. Finding aids describe the creation, content, context, and arrangement of archival materials, allowing users to identify and request materials relevant to their research. Use Archives at Tufts to browse, explore, and discover Tufts’ extraordinary collections of primary sources.</p>
-        </div>
-        <div class="col-sm-6">
-          <h3>Requesting Materials</h3>
-          <p>Each finding aid contains a link to request materials from the collections. Collections do not circulate outside of the archives and must be used in TARC’s reading room, though scans may also be requested. In some cases the collections are stored off-site and require two business days before they are available for use. Some finding aids contain links to digitized versions of all or parts of a collection, but in most cases viewing a collection in its entirety will require visiting our reading room. Please contact us with any questions about using the collections.</p>
-        </div>
-    search_leader: Find what you're looking for
-    welcome_page_title: Home
-  ##added by HLS 2022-08-17
-  bulk-data-leader: bulk
-  date-label: Dates
+                     <p>Search across our collections, digital materials, and more.</p>
+
+    welcome_search_label: "Find what you're looking for:"
+    welcome_page_title: ArchivesSpace Public Interface
+
   actions:
     search: Search
-    search_header: Search the Archives
+    search_header: Search The Archives
     search_within: Search within results
     search_in: "Search %{type}"
     new_search: New Search
     refine_search: Refine Search
-    browse: Browse
-    show_advanced_search: Show Advanced Search
-    hide_advanced_search: Hide Advanced Search
-    backup:  Return to the previous page
+    close: Close
+    backup: Return to the previous page
     backup_abbr: Go back
     cite: Citation
-    bookmark: Bookmark
+    cite_item: Cite Item
+    cite_item_description: Cite Item Description
+    digitized: View Digital Material
     request: Request
-    print: Print
+    print: Download PDF
     print-generating: Generating
     collection_overview: Collection Overview
-    hierarch: Finding Aid View
-    numeric: Container List
+    hierarch: Collection Organization
+    digital_materials: Digital Materials
     numeric: Container Inventory
     detailed: Detailed Contents
     record_details: Record Details
     clipboard: Copy to clipboard
+    clipboard: Copy to clipboard
+    cilpboard_cite_item: Copy item citation to clipboard
+    cilpboard_cite_item_description: Copy item description citation to clipboard
     search_add_row: Add a search row
     search_remove_row: Remove the row below
     staff_link: Staff Only
+    next: Next
+    previous: Previous
 
+  
   page_actions: Page Actions
 
   request:
@@ -78,7 +76,8 @@ en:
     note: Note to the staff
     visit: "Submit a request to visit %{repo_name} to view <strong>%{archival_object}</strong>"
     submit: Submit Request
-    submitted: Thank you, your request has been submitted.  You will soon receive an email with a copy of your request.
+    submitted: Thank you, your request has been submitted.  You will soon receive an email with a
+      copy of your request.
     errors:
       name: Please enter your name
       email: Please enter a valid email address
@@ -117,21 +116,36 @@ en:
     page_connector: of
 
   search_results:
+    highlighting:
+      found_in: Found in
+      four_part_id: Identifier
+      dates: Dates
+      subjects_text: Subjects
+      published_agents: Agents
+      creators_text: Creators
+      role_enum_s: Roles
+      linked_agent_roles: Linked Agent Roles
+      notes_published: Notes
+      finding_aid_title: Finding Aid Title
+      finding_aid_filing_title: Finding Aid Filing Title
+    page_title: "Found %{count} Results"
     page_title: "Found %{count} Results"
     results_head: "Showing %{type}: %{start} - %{end} of %{total}"
     results: Results
     head_prefix: Found
     head_suffix: Results
     searching: Searching
-    search_for: "Search  %{type} where %{conditions}"
-    keyword_published_contain: "<strong>keyword(s)</strong>: <span class='searchterm'>%{kw}</span>"
+    search_for: "Search %{type} where %{conditions}"
+    keyword_contain: "<strong>keyword(s)</strong>: <span class='searchterm'>%{kw}</span>"
     title_contain: "the <strong>title</strong> contains  <span class='searchterm'>%{kw}</span>"
-    notes_published_contain: "the <strong>note</strong> contains  <span class='searchterm'>%{kw}</span>"
-    creators_text_contain: "the <strong>creator</strong> contains <span class='searchterm'>%{kw}</span>"
-    subjects_text_contain: "the <strong>subject</strong> contains <span class='searchterm'>%{kw}</span>"
-    identifier_contain: "the <strong>identifier</strong> contains <span class='searchterm'>%{kw}</span>"
-    four_part_id_contain: "the <strong>identifier</strong> contains <span class='searchterm'>%{kw}</span>"
-    in_repository: " in <strong>%{name}</strong>"
+    notes_contain: "the <strong>note</strong> contains  <span class='searchterm'>%{kw}</span>"
+    creators_text_contain: "the <strong>creator</strong> contains\
+      \ <span class='searchterm'>%{kw}</span>"
+    subjects_text_contain: "the <strong>subject</strong> contains\
+      \ <span class='searchterm'>%{kw}</span>"
+    identifier_contain: "the <strong>identifier</strong> contains\
+      \ <span class='searchterm'>%{kw}</span>"
+     in_repository: " in <strong>%{name}</strong>"
     year_range: " from <strong>%{from_year}</strong> to <strong>%{to_year}</strong>"
     anything: "*"
     search_term: Search term
@@ -144,6 +158,9 @@ en:
     filter_by: Filter By
     filtered_by: Filtered By
     remove_filter: Remove this filter
+    more_facets: More
+    fewer_facets: Less
+
     modified: Last Modified
     created: Created
     text_placeholder: Filter by text
@@ -177,7 +194,7 @@ en:
       creators_text: Creator
       scope: Scope
       notes: Notes
-      identifier: Call Number
+      identifier: Identifier
       source: Source
       published_agents: Names
       has_published_digital_objects: Digital Materials
@@ -198,7 +215,9 @@ en:
       type_enum_s: Type
       published_series_title_u_sstr: Series
       instance_type_enum_s: Instance type
-
+      langcode: Language
+      digital_object_type_enum_s: Type
+      extent_type_enum_s: Extent
 
   search_sorting:
     sort_by: "Sort by:"
@@ -219,7 +238,7 @@ en:
     rules: Rules
     outcome: Outcome
     event_type: Type
-    identifier: Call Number
+    identifier: Identifier
     select: Select
     year_sort: Year
     sorting: "%{type} %{direction}"
@@ -240,12 +259,14 @@ en:
     subgrp: Sub-Group
 
   errors:
-    backend_down_message: Archives at Tufts is currently experiencing technical difficulties. We apologise for the inconvenience. Please try again later.
-
-    error_404_message: "The %{type} record you've tried to access does not exist or may have been removed."
+    error_404: "%{type} Record Not Found"
+    error_404_message: "The %{type} record you've tried to access does not exist or may have been\
+      \ removed."
     backend_down: Unable to Connect to Database
-    backend_down_message: ArchivesSpace is currently experiencing technical difficulties. We apologise for the inconvenience. Please try again later.
+    backend_down_message: ArchivesSpace is currently experiencing technical difficulties. We
+      apologise for the inconvenience. Please try again later.
     unexpected_error: Your request could not be completed due to an unexpected error
+    invalid_search_params: "Invalid search parameter '%{value}' for field '%{field}'"
 
   boolean:
     "true": "Yes"
@@ -253,16 +274,18 @@ en:
 
   navbar:
     search_placeholder: Enter your search terms
-    #search_placeholder: \t
-    search_all: All Records
     error_no_term: No search term(s) entered.
-    search_terms_results: "Your search for {{search_terms}} yielded {{number}} results"
     toggle_navigation: Toggle Navigation
+
+  navigation:
+    hierarchical: hierarchical navigation
+    top_level: top-level navigation
+    mobile_menu: Navigation menu for smaller devices
 
   internal_links:
     main: Main Content
     filter: Filter Results
-    collection: Navigate the collection
+    collection: Collection Organization
     search_collection: Search within collection
 
   accordion:
@@ -271,6 +294,7 @@ en:
 
   advanced_search:
     operator_label: Search operator
+    operator_label: Operator
     operator:
       AND: And
       OR: Or
@@ -314,15 +338,26 @@ en:
   linked_digital_objects: Digital Material
   collection_feed: All records in the collection
   collection_feed_nav: Navigate to Series
+  context: Found in
+  context_delimiter: "/"
+  bulk:
+    _singular: "Majority of material found in %{dates}"
+    _plural: "Majority of material found within %{dates}"
+
+  archive:
+    _singular: The Archive
+    _plural: The Archives
 
   accession:
-   _singular: Unprocessed
+   _singular: Unprocessed Material
    _plural: Unprocessed Materials
    _public:
       section:
         summary: Summary
         acquisition_type: Acquisition Type
         provenance: Provenance
+        language: Language of Description
+        script: Script of Description
         access_restrictions: Access Restrictions
         access_restrictions_apply: Access Restrictions Apply
         use_restrictions: Use Restrictions
@@ -332,6 +367,9 @@ en:
       related_accessions:
        accessions: Related Unprocessed Material
        deaccessions: Deaccessioned Material
+        forms_part_of: Part Relationship
+        has_part: Part Relationship
+        sibling_of: Sibling Relationship
 
   archival_object:
     _singular: Archival Record
@@ -373,11 +411,16 @@ en:
   resource:
     _singular: Collection
     _plural: Collections
+    identifier_separator: ":"
     _public:
-      identifier: Call Number
+      identifier: Identifier
+      identifier_pdf: ID
+      identifier_ark: "ID [ark]"
+      ark_link_name: "Archival Resource Key"
       extent: Extent
       dates: Dates
       lang: Language of Materials
+      lang_pdf: Language of the Material
       script: Script
       digital_object: Digital Object
       physdesc: Physical Description
@@ -386,11 +429,8 @@ en:
       access: Access&#58;
       use: Conditions Governing Use
       additional: Additional Description
-      section:
-        components: Components
-        summary: Summary
-      messages:
-        no_components: Resource has no components
+
+      uri: "ID [aspace_uri]"
       finding_aid:
         head: Finding Aid & Administrative Information
         title: Title
@@ -409,12 +449,23 @@ en:
         note: Note
         revision: Revision Statements
       related_accessions:
-        accessions: Unprocessed Records
+        accessions: Accession Records
         deaccessions: Deaccession Records
+    load_records:
+      alert: This collection contains a large number of records
+      showing: Showing
+      percent_convention: "%"
+      load: Load records
+      load_all: Load all records
+      scroll: On scroll
+      all: All at once
+      loading: Loading
 
   top_container:
     _singular: Container
     _plural: Containers
+    restricted: Restricted
+
 
   related_resource:
     _singular: Related Collection
@@ -427,6 +478,13 @@ en:
       thumbnail: thumbnail
       link: Link to digital object
       badge_label: Digital %{level}
+      go: Go to file
+      additional: Additional File Versions
+      url_encoded_data: URL-encoded data
+      browse_number_digital_objects_in_collection:
+        one: Browse %{num} digital object in collection
+        other: Browse %{num} digital objects in collection
+
       section:
         components: Components
         summary: Summary
@@ -473,6 +531,9 @@ en:
   pui_agent:
     _singular: Name
     _plural:  Names
+    parallel: Parallel Names
+    related: Related Names
+    also_known_as: Also known by the following names
     related: Related Names
     creator: Creator
   record:
@@ -488,6 +549,8 @@ en:
     _plural: Names
     _public:
       section:
+        other_names: Name Forms
+        dates: Dates
         summary: Summary
         other_names: Names Forms
         other_names_preamble: "Also known by the following names:"
@@ -498,6 +561,7 @@ en:
 
   agent_person:
     _singular: Person
+    _plural: People
 
   agent_family:
     _singular: Family
@@ -507,6 +571,30 @@ en:
 
   agent_software:
     _singular: Software
+    _plural: Software
+  agent_function:
+    _singular: Function
+    _plural: Functions
+
+  agent_gender:
+    _singular: Gender
+    _plural: Gender
+
+  agent_place:
+    _singular: Place
+    _plural: Places
+
+  agent_resource:
+    _singular: Related External Resource
+    _plural: Related External Resources
+
+  agent_occupation:
+    _singular: Occupation
+    _plural: Occupations
+
+  agent_topic:
+    _singular: Topic
+    _plural: Topics
 
   components:
     expand: Expand
@@ -533,9 +621,6 @@ en:
   parent_inst: Parent Institution
 
   email: Send email
-  plugins:
-    aeon_fulfillment:
-      request_button_label: Request
 
   fax: Fax
 
@@ -1516,7 +1601,7 @@ en:
     archival_record_level:
       class: Class
       collection: Collection
-      file: Part of Collection
+      file: File
       fonds: Fonds
       item: Item
       otherlevel: Other Level
@@ -1525,8 +1610,6 @@ en:
       subfonds: Sub-Fonds
       subgrp: Sub-Group
       subseries: Sub-Series
-    container_type:
-      container: Box  
     container_location_status:
       current: Current
       previous: Previous
@@ -1551,7 +1634,6 @@ en:
       publication: Publication
       usage: Usage
       other: Other
-      bulk-date-leader:
     date_certainty:
       approximate: Approximate
       inferred: Inferred
@@ -1861,7 +1943,7 @@ en:
       topical: Topical
       uniform_title: Uniform Title
     _note_types: &note_type_definitions
-      accessrestrict: Access
+      accessrestrict: Conditions Governing Access
       accruals: Accruals
       acqinfo: Immediate Source of Acquisition
       altformavail: Existence and Location of Copies
@@ -2036,7 +2118,7 @@ en:
     content_description: Content Description
     provenance: Provenance
     access_date: Access Date
-    access_restrictions_note: Access
+    access_restrictions_note: Conditions Governing Access
     use_restrictions_note: Conditions Governing Use
 
   pdf_reports:
@@ -2055,6 +2137,14 @@ en:
     coming_soon: Your PDF is being generated and will be emailed to you when ready.
     required: Required
     user_email: Your email address
+    finding_aid_date_prefix: This finding aid was produced using ArchivesSpace on
+    finding_aid_written_in: Finding aid written in
+    your_finding_aid_pdf: Your finding aid PDF for "%{title}"
+    your_finding_aid_is_attached: The finding aid you requested is attached.
+    accessrestrict: Conditions Governing Access
+    userestrict: Conditions Governing Use
+    accruals: Accruals
+    acqinfo: Immediate Source of Acquisition
 
   readmore:
     see_more: See more
@@ -2070,3 +2160,106 @@ en:
 
   collection_organization:
     return_to_top: Return to top
+  agent_record_identifier:
+    identifier_type: Identifier Type
+    source: Source
+    primary_identifier: Is Primary Identifier?
+    record_identifier: Record Identifier
+    snac: Social Networks and Archival Context (SNAC) Identifier
+
+  agent_identifier:
+    identifier_type: Identifier Type
+    entity_identifier: Entity ID
+
+  date_label:
+    existence: Existence
+    usage: Usage
+
+  use_date:
+    _plural: Use Dates
+    _singular: Use Date
+
+  used_language:
+    _plural: Languages Used
+    _singular: Language Used
+
+  structured_date_label:
+    date: Date
+
+  agent_contact:
+    name: Contact Name
+    salutation: Salutation
+    address_1: Address 1
+    address_2: Address 2
+    address_3: Address 3
+    city: City
+    region: State/Region
+    country: Country
+    post_code: Post Code
+    fax: Fax
+    email: E-mail
+
+  telephone:
+    _plural: Telephone Numbers
+    number_type: Number Type
+    number: Number
+    ext: Telephone Extension
+
+  agent_notes:
+    _singular: Note
+    _plural: Notes
+    persistent_id: Persistent ID
+    type: Note Type
+    content: Content
+    note_citation: Citation
+    note_bioghist: Biography
+    note_general_context: General Context
+    note_legal_status: Legal Status
+    note_mandate: Mandate
+    note_structure_or_genealogy: Structure or Genealogy
+    note_text: Note
+
+  metadata_rights_declaration:
+    _plural: Metadata Rights Declarations
+    _singular: Metadata Rights Declaration
+    license: License
+    descriptive_note: Descriptive Note
+    file_uri: File URI
+    xlink_title_attribute: Xlink Title Attribute
+    xlink_role_attribute: Xlink Role Attribute
+    xlink_arcrole_attribute: Xlink Arcrole Attribute
+    file_version_xlink_actuate_attribute: Xlink Actuate Attribute
+    file_version_xlink_show_attribute: Xlink Show Attribute
+    last_verified_date: Last Verified Date
+
+  footer:
+    staff_interface: <a href="%{staff_url}">Staff Interface</a>
+    archivesspace_home: Visit <a href='http://archivesspace.org'>ArchivesSpace.org</a>
+    feedback: <a id='aspaceFeedbackLink' href='%{feedback_url}' target='_blank'>Send Feedback or Report a Problem</a>
+
+  languages:
+    select: Select Language
+    en: English
+    es: Spanish
+    fr: French
+    de: German
+    ja: Japanese
+
+  pdf_error:
+    title: There was an error generating this PDF.
+    description: "We're sorry, there was an error generating this PDF finding aid. Here is some diagnostic information to help determine what went wrong."
+    headings:
+      location: Error Location
+      message: Error Message
+      type: Error Type
+      additional_info: Additional Information
+    location:
+      location_header: "The error occurred while generating the header."
+      location_title_page: "The error occurred while generating the title page."
+      location_toc: "The error occurred while generating the table of contents."
+      location_resource: "The error occurred while generating sections relating to the Resource record, which includes Summary Information, Controlled Access Headings, and the Notes sections."
+      location_archival_object: "The error occurred while generating the Collection Inventory."
+      location_footer: "The error occurred while generating the footer."
+    additional_info:
+      invalid_markup: "This error can result from invalid markup present in a note or subrecord."
+
