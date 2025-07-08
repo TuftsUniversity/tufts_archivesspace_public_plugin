@@ -273,14 +273,12 @@ en:
     "false": "No"
 
   navbar:
-    search_placeholder: Enter your search terms
+    #search_placeholder: Enter your search terms
+    search_placeholder: \t
+    search_all: All Records
     error_no_term: No search term(s) entered.
+    search_terms_results: "Your search for {{search_terms}} yielded {{number}} results"
     toggle_navigation: Toggle Navigation
-
-  navigation:
-    hierarchical: hierarchical navigation
-    top_level: top-level navigation
-    mobile_menu: Navigation menu for smaller devices
 
   internal_links:
     main: Main Content
@@ -294,7 +292,6 @@ en:
 
   advanced_search:
     operator_label: Search operator
-    operator_label: Operator
     operator:
       AND: And
       OR: Or
@@ -338,26 +335,15 @@ en:
   linked_digital_objects: Digital Material
   collection_feed: All records in the collection
   collection_feed_nav: Navigate to Series
-  context: Found in
-  context_delimiter: "/"
-  bulk:
-    _singular: "Majority of material found in %{dates}"
-    _plural: "Majority of material found within %{dates}"
-
-  archive:
-    _singular: The Archive
-    _plural: The Archives
 
   accession:
-   _singular: Unprocessed Material
+   _singular: Unprocessed
    _plural: Unprocessed Materials
    _public:
       section:
         summary: Summary
         acquisition_type: Acquisition Type
         provenance: Provenance
-        language: Language of Description
-        script: Script of Description
         access_restrictions: Access Restrictions
         access_restrictions_apply: Access Restrictions Apply
         use_restrictions: Use Restrictions
@@ -367,9 +353,6 @@ en:
       related_accessions:
        accessions: Related Unprocessed Material
        deaccessions: Deaccessioned Material
-        forms_part_of: Part Relationship
-        has_part: Part Relationship
-        sibling_of: Sibling Relationship
 
   archival_object:
     _singular: Archival Record
@@ -411,16 +394,11 @@ en:
   resource:
     _singular: Collection
     _plural: Collections
-    identifier_separator: ":"
     _public:
       identifier: Identifier
-      identifier_pdf: ID
-      identifier_ark: "ID [ark]"
-      ark_link_name: "Archival Resource Key"
       extent: Extent
       dates: Dates
       lang: Language of Materials
-      lang_pdf: Language of the Material
       script: Script
       digital_object: Digital Object
       physdesc: Physical Description
@@ -429,8 +407,11 @@ en:
       access: Access&#58;
       use: Conditions Governing Use
       additional: Additional Description
-
-      uri: "ID [aspace_uri]"
+      section:
+        components: Components
+        summary: Summary
+      messages:
+        no_components: Resource has no components
       finding_aid:
         head: Finding Aid & Administrative Information
         title: Title
@@ -451,21 +432,10 @@ en:
       related_accessions:
         accessions: Accession Records
         deaccessions: Deaccession Records
-    load_records:
-      alert: This collection contains a large number of records
-      showing: Showing
-      percent_convention: "%"
-      load: Load records
-      load_all: Load all records
-      scroll: On scroll
-      all: All at once
-      loading: Loading
 
   top_container:
     _singular: Container
     _plural: Containers
-    restricted: Restricted
-
 
   related_resource:
     _singular: Related Collection
@@ -478,13 +448,6 @@ en:
       thumbnail: thumbnail
       link: Link to digital object
       badge_label: Digital %{level}
-      go: Go to file
-      additional: Additional File Versions
-      url_encoded_data: URL-encoded data
-      browse_number_digital_objects_in_collection:
-        one: Browse %{num} digital object in collection
-        other: Browse %{num} digital objects in collection
-
       section:
         components: Components
         summary: Summary
@@ -531,9 +494,6 @@ en:
   pui_agent:
     _singular: Name
     _plural:  Names
-    parallel: Parallel Names
-    related: Related Names
-    also_known_as: Also known by the following names
     related: Related Names
     creator: Creator
   record:
@@ -549,8 +509,6 @@ en:
     _plural: Names
     _public:
       section:
-        other_names: Name Forms
-        dates: Dates
         summary: Summary
         other_names: Names Forms
         other_names_preamble: "Also known by the following names:"
@@ -561,7 +519,6 @@ en:
 
   agent_person:
     _singular: Person
-    _plural: People
 
   agent_family:
     _singular: Family
@@ -571,30 +528,6 @@ en:
 
   agent_software:
     _singular: Software
-    _plural: Software
-  agent_function:
-    _singular: Function
-    _plural: Functions
-
-  agent_gender:
-    _singular: Gender
-    _plural: Gender
-
-  agent_place:
-    _singular: Place
-    _plural: Places
-
-  agent_resource:
-    _singular: Related External Resource
-    _plural: Related External Resources
-
-  agent_occupation:
-    _singular: Occupation
-    _plural: Occupations
-
-  agent_topic:
-    _singular: Topic
-    _plural: Topics
 
   components:
     expand: Expand
@@ -2137,14 +2070,6 @@ en:
     coming_soon: Your PDF is being generated and will be emailed to you when ready.
     required: Required
     user_email: Your email address
-    finding_aid_date_prefix: This finding aid was produced using ArchivesSpace on
-    finding_aid_written_in: Finding aid written in
-    your_finding_aid_pdf: Your finding aid PDF for "%{title}"
-    your_finding_aid_is_attached: The finding aid you requested is attached.
-    accessrestrict: Conditions Governing Access
-    userestrict: Conditions Governing Use
-    accruals: Accruals
-    acqinfo: Immediate Source of Acquisition
 
   readmore:
     see_more: See more
@@ -2160,106 +2085,3 @@ en:
 
   collection_organization:
     return_to_top: Return to top
-  agent_record_identifier:
-    identifier_type: Identifier Type
-    source: Source
-    primary_identifier: Is Primary Identifier?
-    record_identifier: Record Identifier
-    snac: Social Networks and Archival Context (SNAC) Identifier
-
-  agent_identifier:
-    identifier_type: Identifier Type
-    entity_identifier: Entity ID
-
-  date_label:
-    existence: Existence
-    usage: Usage
-
-  use_date:
-    _plural: Use Dates
-    _singular: Use Date
-
-  used_language:
-    _plural: Languages Used
-    _singular: Language Used
-
-  structured_date_label:
-    date: Date
-
-  agent_contact:
-    name: Contact Name
-    salutation: Salutation
-    address_1: Address 1
-    address_2: Address 2
-    address_3: Address 3
-    city: City
-    region: State/Region
-    country: Country
-    post_code: Post Code
-    fax: Fax
-    email: E-mail
-
-  telephone:
-    _plural: Telephone Numbers
-    number_type: Number Type
-    number: Number
-    ext: Telephone Extension
-
-  agent_notes:
-    _singular: Note
-    _plural: Notes
-    persistent_id: Persistent ID
-    type: Note Type
-    content: Content
-    note_citation: Citation
-    note_bioghist: Biography
-    note_general_context: General Context
-    note_legal_status: Legal Status
-    note_mandate: Mandate
-    note_structure_or_genealogy: Structure or Genealogy
-    note_text: Note
-
-  metadata_rights_declaration:
-    _plural: Metadata Rights Declarations
-    _singular: Metadata Rights Declaration
-    license: License
-    descriptive_note: Descriptive Note
-    file_uri: File URI
-    xlink_title_attribute: Xlink Title Attribute
-    xlink_role_attribute: Xlink Role Attribute
-    xlink_arcrole_attribute: Xlink Arcrole Attribute
-    file_version_xlink_actuate_attribute: Xlink Actuate Attribute
-    file_version_xlink_show_attribute: Xlink Show Attribute
-    last_verified_date: Last Verified Date
-
-  footer:
-    staff_interface: <a href="%{staff_url}">Staff Interface</a>
-    archivesspace_home: Visit <a href='http://archivesspace.org'>ArchivesSpace.org</a>
-    feedback: <a id='aspaceFeedbackLink' href='%{feedback_url}' target='_blank'>Send Feedback or Report a Problem</a>
-
-  languages:
-    select: Select Language
-    en: English
-    es: Spanish
-    fr: French
-    de: German
-    ja: Japanese
-
-  pdf_error:
-    title: There was an error generating this PDF.
-    description: "We're sorry, there was an error generating this PDF finding aid. Here is some diagnostic information to help determine what went wrong."
-    headings:
-      location: Error Location
-      message: Error Message
-      type: Error Type
-      additional_info: Additional Information
-    location:
-      location_header: "The error occurred while generating the header."
-      location_title_page: "The error occurred while generating the title page."
-      location_toc: "The error occurred while generating the table of contents."
-      location_resource: "The error occurred while generating sections relating to the Resource record, which includes Summary Information, Controlled Access Headings, and the Notes sections."
-      location_archival_object: "The error occurred while generating the Collection Inventory."
-      location_footer: "The error occurred while generating the footer."
-    additional_info:
-      invalid_markup: "This error can result from invalid markup present in a note or subrecord."
-
