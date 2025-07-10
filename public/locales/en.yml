@@ -1888,3 +1888,15 @@ search_results:
     langcode: Language
     digital_object_type_enum_s: Type
     extent_type_enum_s: Extent
+  highlighting:
+    found_in: Found in
+    four_part_id: Identifier
+    dates: Dates
+    subjects_text: Subjects
+    published_agents: Agents
+    creators_text: Creators
+    role_enum_s: Roles
+    linked_agent_roles: Linked Agent Roles
+    notes_published: Notes
+    finding_aid_title: Finding Aid Title
+    finding_aid_filing_title: Finding Aid Filing Title
