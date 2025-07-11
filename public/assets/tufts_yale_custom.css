@@ -1373,5 +1373,29 @@ div.information a.btn { border: 1px solid #ccc; }
 
 .identifier .id-label { font-weight: normal; }
 
-  
-    
+
+/* Collection organization column and mobile layout */
+
+@media (max-width: 991px) {
+	div#info_row {
+		flex-wrap: wrap;
+	}
+    	.infinite-tree-sidebar {
+        	display: block; 
+    	} 
+	.row.has-resizable-content {
+		flex-wrap: wrap-reverse;
+	} 
+	.objectimage img, .additional-file-version img {
+		min-width: auto;
+	}
+	nav.navbar {
+		border: 0px;
+		background-color: #476F9D !important;
+	}
+	#notes_row .col-sm-9.resizable-content-pane {
+		width: 100% !important;
+		flex: none;
+		max-width: 100%;
+	}
+}    
