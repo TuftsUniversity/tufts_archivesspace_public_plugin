@@ -294,7 +294,7 @@ div.information a.btn { border: 1px solid #ccc; }
 }
 div.information a.btn { border: 1px solid #ccc; }
 .bottom-bar a,.bottom-bar a:visited,.bottom-bar a:hover,.bottom-bar a:focus{color:#fefefe;font-size:0.84em;}
-.bottom-bar {}
+.bottom-bar {padding-top: 2em;}
 @media print,screen and (min-width:10em){.bottom-bar {padding-bottom:2em}
 }
 .bottom-bar .logo{max-width:33%;margin-bottom:3em}
@@ -665,7 +665,7 @@ div.information a.btn { border: 1px solid #ccc; }
   footer.footer, .panel-footer{
       background-color: #000000;
       color: #FFFFFF;
-      margin-top: 3em;
+      margin-top: 0;
 	  padding-bottom: 5em;
 	  width: 100%;
       height: 100%;
@@ -1080,7 +1080,7 @@ div.information a.btn { border: 1px solid #ccc; }
   .identifier span.id-label,
   .component {
     font-family: "proxima-nova","proxima-nova",Arial,Helvetica,sans-serif;
-    font-weight: normal;
+    /* font-weight: normal; */
   }
 
   /* OUP:  Sort Display --------------------------------------------------------- */
@@ -1291,5 +1291,111 @@ div.information a.btn { border: 1px solid #ccc; }
   .alert-title {font-weight: bold;}
 
 
-  
-    
+/* SB (TARC): additions for 4.0.0 */
+
+/* Button colors */
+
+#submit_search {background-color: #47709e;}
+
+.page-item.active .page-link {
+	background-color: #47709e;
+	border-color: #47709e; }
+		
+.page-link {
+	color: #0053a8; }
+	
+.btn-primary {
+	background-color: #47709e;
+	border-color: #47709e; }
+	
+.more-facets .btn {
+	border: 1px solid #47709e;
+	color: #47709e; }
+
+.readmore__label {
+	border: 1px solid #47709e;
+	color: #47709e; }
+	
+
+/* Finding aid view */
+
+.bg-secondary {
+	background-color: #286dc0 !important; }
+	
+.load-all__label-toggle {
+	background: #286dc0; !important; }
+	
+#load-all-section {
+	background-color: #effaff; }
+ 
+
+/* Finding aid view scroll area */
+
+#infinite-tree-container {
+    margin-bottom: 0;
+}
+
+#sidebar {
+	padding-bottom: 0;
+}
+	
+
+/* Thumbs on archival object pages */
+
+.objectimage .panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+}
+
+.objectimage img, .additional-file-version img {
+    padding: 4px;
+}
+
+.thumbnail {
+    display: block;
+    line-height: 1.428571429;
+}
+
+.panel-heading {
+    padding: 0.5rem;
+    background-color: #f5f5f5;
+}
+
+
+/* Search results */
+
+.identifier .id-label { font-weight: normal; }
+
+
+/* Collection organization column and mobile layout */
+
+@media (max-width: 991px) {
+	div#info_row {
+		flex-wrap: wrap;
+	}
+    	.infinite-tree-sidebar {
+        	display: block; 
+    	} 
+	.row.has-resizable-content {
+		flex-wrap: wrap-reverse;
+	} 
+	.objectimage img, .additional-file-version img {
+		min-width: auto;
+	}
+	nav.navbar {
+		border: 0px;
+		background-color: #476F9D !important;
+	}
+	#notes_row .col-sm-9.resizable-content-pane {
+		width: 100% !important;
+		flex: none;
+		max-width: 100%;
+	}
+}    
