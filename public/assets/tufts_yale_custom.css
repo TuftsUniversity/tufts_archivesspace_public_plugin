@@ -1399,3 +1399,7 @@ div.information a.btn { border: 1px solid #ccc; }
 		max-width: 100%;
 	}
 }    
+
+/* Container inventory - hide restricted until machine actionable restrictions updated */
+
+.recordsummary .staff-hidden {display: none;}
