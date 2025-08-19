@@ -216,14 +216,15 @@ if (top.location.pathname !== '/')
 		  "align-items": "center"
 		});
 
-
+			//v. 4.1.1: change back to core HTML for list of creators
+			/*
 			$(".agents_list").wrap("<div></div>");
 			$(".agents_list li").contents().unwrap();
 			$(".agents_list").contents().wrap("<div id='agents-div'></div>");
 			$(".agents_list").contents().unwrap();
 			//$("#agents-content").wrap("<p id='agents-content-par'></p>");
 			//$("#agents-content-par").unwrap().wrap("<div id='agents-div'></div>);
-
+			*/
 			
 			$(".navbar").css({"width": "100%"})
 

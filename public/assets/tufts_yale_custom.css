@@ -596,11 +596,13 @@ div.information a.btn { border: 1px solid #ccc; }
     font-weight: 500;
    /* white-space: pre-wrap; */
   }
-  
+
+/* SB: Styles for this element removed for the update to 4.1.1
 .agents_list > li {
    float: left !important;
    display: block !important;
 }
+*/
 
 .single_note h2 {
   display: block;
@@ -1400,6 +1402,7 @@ div.information a.btn { border: 1px solid #ccc; }
 	}
 }    
 
-/* Container inventory - hide restricted until machine actionable restrictions updated */
+/* Container inventory and top container pages - hide restricted until machine actionable restrictions updated */
+/* updated for v. 4.1.1 */
 
-.recordsummary .staff-hidden {display: none;}
+.recordsummary .staff-hidden, .staff-hidden .restricted  {display: none;}
