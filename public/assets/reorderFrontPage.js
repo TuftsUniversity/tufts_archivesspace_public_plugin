@@ -148,133 +148,153 @@ $(document).ready(function () {
 
 
 }
-if (top.location.pathname !== '/')
+if (top.location.pathname !== '/') {
 
-        //$(document).ready(function () {
-        document.addEventListener("DOMContentLoaded", function() {
-			
-	
+    document.addEventListener("DOMContentLoaded", function () {
 
-		var buttonList = $(".text-right ul.list-inline");
+        var buttonList = $(".text-right ul.list-inline");
 
-	    // Locate the specific <li> elements for each button
-	    var askQuestionButton = buttonList.find("a[title='Ask a Question']").closest("li");
-	    var aeonRequestButton = buttonList.find("#aeon_request_button").closest("li");
-	    var citationButton = buttonList.find("form#cite_sub").closest("li"); 
+        // Locate the specific <li> elements for each button
+        var askQuestionButton = buttonList
+            .find("a[title='Ask a Question']")
+            .closest("li");
 
-	    // Ensure the elements exist before proceeding 
-	    if (askQuestionButton.length && aeonRequestButton.length && citationButton.length) {
-	 	 // Reorder the buttons
-	    askQuestionButton.detach().appendTo(buttonList); // Move "Ask a Question" to the end
-		aeonRequestButton.detach().insertBefore(askQuestionButton); // Move "Aeon Request" before "Ask a Question"
-	    } else {
-		   console.error("Some elements could not be found.");
-	    }
+        var aeonRequestButton = buttonList
+            .find("#aeon_request_button")
+            .closest("li");
 
-//      });
+        var citationButton = buttonList
+            .find("form#cite_sub")
+            .closest("li");
 
-		const mainNavbar = $("#navigation .navbar-nav");
+        // Reorder the buttons if all are present
+        if (
+            askQuestionButton.length &&
+            aeonRequestButton.length &&
+            citationButton.length
+        ) {
+            // Move "Ask a Question" to the end
+            askQuestionButton.detach().appendTo(buttonList);
 
-		mainNavbar.css({ "width": "100%" });
-
-		// Add the Search label if not already present
-		if (!$("#search-label-for-js").length) {
-		  $("<li id='search-label-for-js' class='nav-item p-2'><a class='nav-link'>Search:</a></li>")
-			.insertAfter(mainNavbar.find("li:nth-child(2)"));
-		}
-
-		// Move search label and link to the right
-		const searchLabel = $("#search-label-for-js");
-		const searchLinkItem = mainNavbar.find("li:has(a[title='Search The Archives'])");
-
-		searchLabel.insertBefore(searchLinkItem);
-
-		// Float them right
-		searchLabel.add(searchLinkItem).css("float", "right");
-
-		// Prevent link action on hover
-		searchLabel.find("a").hover(function () {
-		  $(this).css("pointer-events", "none");
-		});
-
-		// Add Home link if not already there
-		if (!mainNavbar.find("a[href='https://archives.tufts.edu']").length) {
-		  $("<li class='nav-item p-2'><a class='nav-link' href='https://archives.tufts.edu'>Home</a></li>")
-			.insertBefore(mainNavbar.find("li:first-child"));
-		}
-
-		const wrapperLi = $("<li class='nav-item search-right-group'></li>")
-			.css({
-			"margin-left": "auto",
-			"display": "flex",
-			"align-items": "center",
-			"gap": "8px" // optional spacing
-			})
-			.append(searchLabel)
-			.append(searchLinkItem);
-
-		// Append the new wrapper <li> to the navbar
-		$(".navbar-nav").append(wrapperLi);
-		// Set flex layout for li items in top nav only
-		mainNavbar.children("li").css({
-		  "display": "inline-flex",
-		  "align-items": "center"
-		});
-
-			//v. 4.1.1: change back to core HTML for list of creators
-			/*
-			$(".agents_list").wrap("<div></div>");
-			$(".agents_list li").contents().unwrap();
-			$(".agents_list").contents().wrap("<div id='agents-div'></div>");
-			$(".agents_list").contents().unwrap();
-			//$("#agents-content").wrap("<p id='agents-content-par'></p>");
-			//$("#agents-content-par").unwrap().wrap("<div id='agents-div'></div>);
-			*/
-			
-			$(".navbar").css({"width": "100%"})
-
-			$(".navbar li").has("span.fa-search").css({
-				"float": "right"
-			});
-			
-
-			// run test on initial page load
-			checkSize();
-			$(window).resize(checkSize);
-			// run test on resize of the window
-					function checkSize(){
-					if ($(".navbar li:nth-child(2)").css("padding-right") == "2px"){
-
-							// do something here
-							$(".navbar li:nth-child(2)").css({"padding-right": "2px"});
-
-
-					}
-			}
-
-	
-        });
-
-/*
-if (top.location.pathname !== '/search')
-
-document.addEventListener("DOMContentLoaded", function() {
-        $(".search_results div").sort(sort_results).appendTo(".search_results");
-
-        function sort_results(a, b){
-
-                var re = /^[^\/]+/;
-                var a_type = $(a).attr('data-uri');
-                var b_type = $(b).attr('data-uri');
-
-                a_type = re.exec(a_type);
-
-                b_type = re.exec(b_type);
-
-
-                return (a_type == "archival_objects").d
+            // Move "Aeon Request" immediately before it
+            aeonRequestButton.detach().insertBefore(askQuestionButton);
+        } else {
+            console.error("Some elements could not be found.");
         }
 
-});
 
+        /*
+         * Navbar search controls
+         */
+
+        const navbar = $(".navbar-nav").first();
+
+        // Find the <li> containing the magnifying glass
+        const searchItem = navbar
+            .find("li")
+            .has("span.fa-search")
+            .first();
+
+        if (searchItem.length) {
+
+            // Create the "Search:" label if it doesn't already exist
+            if (!$("#search-label-for-js").length) {
+                $("<li id='search-label-for-js' class='nav-item p-2'>" +
+                    "<a class='nav-link'>Search:</a>" +
+                  "</li>")
+                    .insertBefore(searchItem);
+            }
+
+            const searchLabel = $("#search-label-for-js");
+
+            // Keep both elements as direct children of the <ul>.
+            // Put them at the end, label first and magnifying glass second.
+            searchLabel.detach().appendTo(navbar);
+            searchItem.detach().appendTo(navbar);
+
+            // Make sure the navbar occupies the available width.
+            navbar.css({
+                "width": "100%",
+                "display": "flex",
+                "align-items": "center"
+            });
+
+            // Keep navbar items aligned correctly.
+            navbar.children("li").css({
+                "display": "inline-flex",
+                "align-items": "center"
+            });
+
+            /*
+             * This pushes the Search label AND the following magnifying
+             * glass all the way to the right.
+             */
+            searchLabel.css({
+                "margin-left": "auto"
+            });
+
+            // The label is informational, not a link.
+            searchLabel.find("a").css({
+                "pointer-events": "none",
+                "cursor": "default"
+            });
+        }
+
+
+        // v. 4.1.1: change back to core HTML for list of creators
+        /*
+        $(".agents_list").wrap("<div></div>");
+        $(".agents_list li").contents().unwrap();
+        $(".agents_list").contents().wrap("<div id='agents-div'></div>");
+        $(".agents_list").contents().unwrap();
+        */
+
+
+        // Run test on initial page load
+        checkSize();
+
+        // Run test on resize
+        $(window).resize(checkSize);
+
+        function checkSize() {
+            if (
+                $(".navbar li:nth-child(2)").css("padding-right") === "2px"
+            ) {
+                $(".navbar li:nth-child(2)").css({
+                    "padding-right": "2px"
+                });
+            }
+        }
+
+    });
+}
+
+
+/*
+if (top.location.pathname !== '/search') {
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        $(".search_results div")
+            .sort(sort_results)
+            .appendTo(".search_results");
+
+        function sort_results(a, b) {
+
+            var re = /^[^\/]+/;
+
+            var a_type = $(a).attr("data-uri");
+            var b_type = $(b).attr("data-uri");
+
+            a_type = re.exec(a_type);
+            b_type = re.exec(b_type);
+
+            return (a_type == "archival_objects").d;
+        }
+
+    });
+
+}
 */
+
+
