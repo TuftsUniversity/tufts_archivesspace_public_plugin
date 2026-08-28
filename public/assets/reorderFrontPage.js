@@ -216,13 +216,15 @@ if (top.location.pathname !== '/') {
             navbar.css({
                 "width": "100%",
                 "display": "flex",
-                "align-items": "center"
+				// Remove alignment for 4.2.1
+                /* "align-items": "center" */
             });
 
             // Keep navbar items aligned correctly.
             navbar.children("li").css({
                 "display": "inline-flex",
-                "align-items": "center"
+				// Remove alignment for 4.2.1
+                /* "align-items": "center" */
             });
 
             /*
@@ -240,6 +242,12 @@ if (top.location.pathname !== '/') {
             });
         }
 
+			// Added by SB for 4.2.1
+			// Add Home link if not already there
+			if (!navbar.find("a[href='https://archives.tufts.edu']").length) {
+				$("<li class='nav-item p-2'><a class='nav-link' href='https://archives.tufts.edu'>Home</a></li>")
+				.insertBefore(navbar.find("li:first-child"));
+			}
 
         // v. 4.1.1: change back to core HTML for list of creators
         /*
