@@ -1413,6 +1413,9 @@ div.information a.btn { border: 1px solid #ccc; }
 	#search-label-for-js {
 	    display: none !important;
 	}
+	#sidebar {
+		margin-top: 1em;
+	}
 }    
 
 /* Container inventory and top container pages - hide restricted until machine actionable restrictions updated */
