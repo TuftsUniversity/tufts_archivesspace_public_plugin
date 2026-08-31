@@ -1309,15 +1309,20 @@ div.information a.btn { border: 1px solid #ccc; }
 .btn-primary {
 	background-color: #47709e;
 	border-color: #47709e; }
-	
-.more-facets .btn {
+
+/* Update class names for 4.2.1 */
+.more-facets .btn, .more-facets__controls .btn {
 	border: 1px solid #47709e;
 	color: #47709e; }
 
 .readmore__label {
 	border: 1px solid #47709e;
 	color: #47709e; }
-	
+
+/* Color of navbar toggle button for small screens - 4.2.1 */
+.navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(255,255,255, 0.75)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
 
 /* Finding aid view */
 
@@ -1340,7 +1345,11 @@ div.information a.btn { border: 1px solid #ccc; }
 #sidebar {
 	padding-bottom: 0;
 }
-	
+
+/* Finding aid view collection tree - version 4.2.1 */
+.node-title {
+    color: #0053a8;
+}	
 
 /* Thumbs on archival object pages */
 
@@ -1399,6 +1408,13 @@ div.information a.btn { border: 1px solid #ccc; }
 		width: 100% !important;
 		flex: none;
 		max-width: 100%;
+	}
+	/* 4.2.1 - Hide Search text on mobile menu */
+	#search-label-for-js {
+	    display: none !important;
+	}
+	#sidebar {
+		margin-top: 1em;
 	}
 }    
 
